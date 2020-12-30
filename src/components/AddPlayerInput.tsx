@@ -1,15 +1,22 @@
 import React, { ChangeEvent } from "react";
-import { addPlayer } from "../store/player/actions";
+import { addPlayer, fetchActivePlayer } from "../store/player/actions";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "..";
-type Props = {};
+type Props = {
+  btnText: string;
+};
 
 type Dispatchers = {
   addPlayer: (name: string) => void;
+  setActivePlayer: (name: string) => void;
 };
 
-const AddPlayerInput: React.FC<Props & Dispatchers> = ({ addPlayer }) => {
+const AddPlayerInput: React.FC<Props & Dispatchers> = ({
+  addPlayer,
+  setActivePlayer,
+  btnText,
+}) => {
   const [player, setPlayer] = React.useState({
     name: "",
   });
@@ -31,7 +38,14 @@ const AddPlayerInput: React.FC<Props & Dispatchers> = ({ addPlayer }) => {
         type="text"
         placeholder="note"
       />
-      <button onClick={() => addPlayer(player.name)}>Add Player</button>
+      <button
+        onClick={() => {
+          addPlayer(player.name);
+          setActivePlayer(player.name);
+        }}
+      >
+        {btnText}
+      </button>
     </>
   );
 };
@@ -40,8 +54,10 @@ const mapStateToProps = (state: AppState, ownProps: Props) => ({});
 
 const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({
   addPlayer: (name: string) => {
-    console.log("dispathc");
     dispatch(addPlayer(name));
+  },
+  setActivePlayer: (name: string) => {
+    dispatch(fetchActivePlayer(name));
   },
 });
 

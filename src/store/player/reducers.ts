@@ -1,13 +1,38 @@
 import { ActionType } from "typesafe-actions";
-import { GameState, GameActionTypes, ADD_PLAYER } from "./types";
+import {
+  GameState,
+  GameActionTypes,
+  ADD_PLAYER,
+  SET_ACTIVE_PLAYER,
+} from "./types";
 import * as actions from "./actions";
 
 const initialState: GameState = {
-  teams: [],
+  teams: [
+    {
+      cards: [],
+      id: "",
+      name: "Red",
+      players: [],
+      points: 0,
+    },
+    {
+      cards: [],
+      id: "",
+      name: "Blue",
+      players: [],
+      points: 0,
+    },
+  ],
   players: [],
   winner: -1,
   goalScore: 10,
   turn: 0,
+  gameID: "test",
+  activePlayer: {
+    id: "",
+    name: "",
+  },
 };
 export type GameAction = ActionType<typeof actions>;
 
@@ -25,7 +50,11 @@ export const gameReducer = (
         ...state,
         players: [...state.players, action.payload],
       };
-
+    case SET_ACTIVE_PLAYER:
+      return {
+        ...state,
+        activePlayer: action.payload,
+      };
     default:
       return state;
   }

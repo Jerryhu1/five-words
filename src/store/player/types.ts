@@ -9,7 +9,7 @@ export interface Player {
 export interface Team {
   id: string;
   name: string;
-  players: number[];
+  players: Player[];
   points: number;
   cards: number[];
 }
@@ -20,22 +20,26 @@ export interface GameState {
   winner: number;
   goalScore: number;
   turn: number;
+  gameID: string;
+  activePlayer: Player;
 }
 
-export const ADD_PLAYER_TEAM = "ADD_PLAYER_TEAM";
+export const ADD_TEAM_PLAYER = "ADD_PLAYER_TEAM";
 export const ADD_PLAYER = "ADD_PLAYER";
 export const ADD_TEAM = "ADD_TEAM";
+export const FETCH_ACTIVE_PLAYER = "FETCH_ACTIVE_PLAYER";
+export const SET_ACTIVE_PLAYER = "SET_ACTIVE_PLAYER";
 
 interface AddPlayerAction {
   type: typeof ADD_PLAYER;
   payload: Player;
 }
 
-interface AddPlayerTeamAction {
-  type: typeof ADD_PLAYER_TEAM;
+interface ADD_TEAM_PLAYER {
+  type: typeof ADD_TEAM_PLAYER;
   payload: {
-    player: number;
-    team: number;
+    playerID: string;
+    teamID: string;
   };
 }
 
@@ -44,7 +48,19 @@ interface AddTeamAction {
   payload: Team;
 }
 
+interface FetchActivePlayer {
+  type: typeof FETCH_ACTIVE_PLAYER;
+  payload: string;
+}
+
+interface SetActivePlayer {
+  type: typeof SET_ACTIVE_PLAYER;
+  payload: Player;
+}
+
 export type GameActionTypes =
   | AddPlayerAction
-  | AddPlayerTeamAction
-  | AddTeamAction;
+  | ADD_TEAM_PLAYER
+  | AddTeamAction
+  | FetchActivePlayer
+  | SetActivePlayer;
