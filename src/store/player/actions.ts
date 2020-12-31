@@ -1,42 +1,56 @@
 import {
   ADD_PLAYER,
   ADD_TEAM_PLAYER,
+  ADD_TEAM_PLAYER_OK,
   FETCH_ACTIVE_PLAYER,
-  GameActionTypes,
   Player,
+  REMOVE_TEAM_PLAYER,
   SET_ACTIVE_PLAYER,
 } from "./types";
 import cuid from "cuid";
+import { createAction } from "typesafe-actions";
 
-// export const loadCards = createAction('LOAD_CARD')<Card[]>();
-// export const addPlayer = createAction('ADD_PLAYER', (name: string) =>
-//     ({ id: cuid(), name: name }))<Player>();
-
-export const addPlayer = (name: string): GameActionTypes => ({
-  type: ADD_PLAYER,
-  payload: {
-    id: cuid(),
-    name: name,
-  },
+export const removeTeamPlayer = createAction(REMOVE_TEAM_PLAYER, (action) => {
+  return (player: Player, teamIndex: number, playerIndex: number) =>
+    action({
+      player: player,
+      teamIndex: teamIndex,
+      playerIndex: playerIndex,
+    });
 });
 
-export const fetchActivePlayer = (name: string): GameActionTypes => ({
-  type: FETCH_ACTIVE_PLAYER,
-  payload: name,
+export const addPlayer = createAction(ADD_PLAYER, (action) => {
+  return (name: string) =>
+    action({
+      id: cuid(),
+      name: name,
+    });
 });
 
-export const setActivePlayer = (player: Player): GameActionTypes => ({
-  type: SET_ACTIVE_PLAYER,
-  payload: player,
+export const fetchActivePlayer = createAction(FETCH_ACTIVE_PLAYER, (action) => {
+  return (name: string) =>
+    action({
+      name: name,
+    });
 });
 
-export const addTeamPlayer = (
-  playerID: string,
-  teamID: string
-): GameActionTypes => ({
-  type: ADD_TEAM_PLAYER,
-  payload: {
-    playerID: playerID,
-    teamID: teamID,
-  },
+export const setActivePlayer = createAction(SET_ACTIVE_PLAYER, (action) => {
+  return (player: Player) => action(player);
+});
+
+export const addTeamPlayer = createAction(ADD_TEAM_PLAYER, (action) => {
+  return (player: Player, teamID: string, index: number) =>
+    action({
+      player: player,
+      teamID: teamID,
+      teamIndex: index,
+    });
+});
+
+export const addTeamPlayerOk = createAction(ADD_TEAM_PLAYER_OK, (action) => {
+  return (player: Player, index: number) =>
+    action({
+      player: player,
+      teamIndex: index,
+    });
 });

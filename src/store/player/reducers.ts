@@ -1,11 +1,7 @@
-import { ActionType } from "typesafe-actions";
-import {
-  GameState,
-  GameActionTypes,
-  ADD_PLAYER,
-  SET_ACTIVE_PLAYER,
-} from "./types";
+import { ActionType, getType } from "typesafe-actions";
+import { GameState } from "./types";
 import * as actions from "./actions";
+export type PlayerActionTypes = ActionType<typeof actions>;
 
 const initialState: GameState = {
   teams: [
@@ -30,30 +26,66 @@ const initialState: GameState = {
   turn: 0,
   gameID: "test",
   activePlayer: {
-    id: "",
-    name: "",
+    id: "test",
+    name: "test",
   },
 };
-export type GameAction = ActionType<typeof actions>;
 
-// export const gameReducer = createReducer<GameState, GameAction>(initialState)
-//     .handleAction(loadCards, (state, action) => Object.assign({}, state, { cards: action.payload }) )
-//     .handleAction(addPlayer, (state, action) => Object.assign({}, state, { players: action.payload  }))
-
-export const gameReducer = (
+export const playerReducer = (
   state = initialState,
-  action: GameActionTypes
+  action: PlayerActionTypes
 ): GameState => {
   switch (action.type) {
-    case ADD_PLAYER:
+    case getType(actions.addPlayer):
       return {
         ...state,
         players: [...state.players, action.payload],
       };
-    case SET_ACTIVE_PLAYER:
+    case getType(actions.setActivePlayer):
+      console.log(action.payload);
       return {
         ...state,
-        activePlayer: action.payload,
+        activePlayer: {
+          name: action.payload.name,
+          id: action.payload.id,
+        },
+      };
+    case getType(actions.addTeamPlayerOk):
+      return {
+        ...state,
+        teams: [
+          ...state.teams.splice(0, action.payload.teamIndex),
+          {
+            ...state.teams[action.payload.teamIndex],
+            players: state.teams[action.payload.teamIndex].players.concat(
+              action.payload.player
+            ),
+          },
+          ...state.teams.splice(
+            action.payload.teamIndex + 1,
+            state.teams.length
+          ),
+        ],
+      };
+    case getType(actions.removeTeamPlayer):
+      return {
+        ...state,
+        teams: [
+          ...state.teams.splice(0, action.payload.teamIndex),
+          {
+            ...state.teams[action.payload.teamIndex],
+            players: [
+              ...state.teams[action.payload.teamIndex].players.splice(
+                0,
+                action.payload.playerIndex
+              ),
+              ...state.teams[action.payload.teamIndex].players.splice(
+                action.payload.playerIndex + 1,
+                state.teams[action.payload.teamIndex].players.length
+              ),
+            ],
+          },
+        ],
       };
     default:
       return state;

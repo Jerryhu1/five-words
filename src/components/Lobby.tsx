@@ -1,5 +1,4 @@
 import { connect } from "react-redux";
-import { Dispatch } from "redux";
 import { AppState } from "..";
 import { addTeamPlayer } from "../store/player/actions";
 import { Player, Team } from "../store/player/types";
@@ -9,38 +8,52 @@ type Props = {
   player?: Player;
 };
 
-type Dispatcher = {
-  addTeamPlayer: (player: string, team: string) => {};
+const dispatchProps = {
+  addTeamPlayer: addTeamPlayer,
 };
 
-const Lobby: React.FC<Props & Dispatcher> = ({
+const Lobby: React.FC<Props & typeof dispatchProps> = ({
   player,
   teams,
   addTeamPlayer,
 }) => {
+  console.log(!teams);
+
+  const addPlayerToTeam = (
+    player: Player,
+    playerID: string,
+    teamIndex: number
+  ) => {
+    addTeamPlayer(player, playerID, teamIndex);
+  };
+
   return (
     <>
       <div>Team</div>
       {!teams
         ? null
-        : teams.map((value, index) => {
+        : teams.map((value, index) => (
             <div>
               <h1>{value.name}</h1>
               <ul>
-                {value.players.map((player, i) => {
-                  <li>{player.name}</li>;
-                })}
+                {value.players.map((player, i) => (
+                  <li>{player.name}</li>
+                ))}
               </ul>
-              <button
-                key={index}
-                onClick={() =>
-                  !player ? null : addTeamPlayer(player.id, value.id)
-                }
-              >
-                Join {value.name}
-              </button>
-            </div>;
-          })}
+              {value.players.length > 0 ||
+              value.players.filter((el) => el.id == player?.id).length >
+                0 ? null : (
+                <button
+                  key={index}
+                  onClick={() =>
+                    !player ? null : addTeamPlayer(player, value.id, index)
+                  }
+                >
+                  Join {value.name}
+                </button>
+              )}
+            </div>
+          ))}
     </>
   );
 };
@@ -50,9 +63,4 @@ const mapStateToProps = (state: AppState, ownProps: Props) => ({
   player: state.game.activePlayer,
 });
 
-const mapStateToDispatchers = (dispatch: Dispatch) => ({
-  addTeamPlayer: (playerID: string, teamID: string) =>
-    dispatch(addTeamPlayer(playerID, teamID)),
-});
-
-export default connect(mapStateToProps, mapStateToDispatchers)(Lobby);
+export default connect(mapStateToProps, dispatchProps)(Lobby);

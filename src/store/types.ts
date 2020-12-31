@@ -1,5 +1,5 @@
 import { CardActionTypes } from "./card/type";
-import { GameActionTypes } from "./player/types";
+import { PlayerActionTypes } from "./player/reducers";
 import { TimerActionTypes } from "./timer/type";
 
-export type AppActions = GameActionTypes | TimerActionTypes | CardActionTypes;
+export type AppActions = PlayerActionTypes | TimerActionTypes | CardActionTypes;

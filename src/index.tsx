@@ -6,7 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Game } from "./components/Game";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import { Provider } from "react-redux";
-import { gameReducer } from "./store/player/reducers";
+import { playerReducer } from "./store/player/reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
 import { rootSaga } from "./sagas/rootSaga";
@@ -16,7 +16,7 @@ import { timerReducer } from "./store/timer/reducer";
 const sagaMiddleware = createSagaMiddleware();
 
 const rootReducer = combineReducers({
-  game: gameReducer,
+  game: playerReducer,
   card: cardReducer,
   timer: timerReducer,
 });
