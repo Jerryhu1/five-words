@@ -8,6 +8,7 @@ export const REMOVE_TEAM_PLAYER = "REMOVE_TEAM_PLAYER";
 export interface Player {
   id: string;
   name: string;
+  teamID: string;
 }
 
 export interface Team {

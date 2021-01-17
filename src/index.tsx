@@ -3,30 +3,23 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { Game } from "./components/Game";
-import { applyMiddleware, combineReducers, createStore } from "redux";
+import { applyMiddleware, createStore } from "redux";
 import { Provider } from "react-redux";
-import { playerReducer } from "./store/player/reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
 import { rootSaga } from "./sagas/rootSaga";
-import { cardReducer } from "./store/card/reducer";
-import { timerReducer } from "./store/timer/reducer";
+import reduxWebsocket from "@giantmachines/redux-websocket";
+import { rootReducer, RootState } from "./store";
 
 const sagaMiddleware = createSagaMiddleware();
+const reduxWebsocketMiddleware = reduxWebsocket();
 
-const rootReducer = combineReducers({
-  game: playerReducer,
-  card: cardReducer,
-  timer: timerReducer,
-});
-
-export type AppState = ReturnType<typeof rootReducer>;
-
+export type AppState = RootState;
 const store = createStore(
   rootReducer /* preloadedState, */,
-  composeWithDevTools(applyMiddleware(sagaMiddleware))
+  composeWithDevTools(applyMiddleware(sagaMiddleware, reduxWebsocketMiddleware))
 );
+
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
