@@ -15,9 +15,10 @@ export const wsNewMessage = createAction(WS_NEW_MESSAGE, (action) => {
 });
 
 export const wsConnect = createAction(WS_CONNECT, (action) => {
-  return (host: string) =>
+  return (host: string, name: string) =>
     action({
       host: host,
+      name: name,
     });
 });
 

@@ -21,6 +21,10 @@ function* connectSocketFlow(action: SocketActions) {
     case WS_CONNECT:
       console.log("connecting to :", action.payload.host);
       yield put(connect(action.payload.host));
+      let msg = {
+        type: "ADD_PLAYER_ROOM",
+      };
+      yield put(send({ message: {} }));
       break;
     case WS_DISCONNECT:
       console.log("disconnecting");

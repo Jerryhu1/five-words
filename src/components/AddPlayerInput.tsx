@@ -44,7 +44,7 @@ const AddPlayerInput: React.FC<Props & typeof dispatchProps> = ({
       <button
         onClick={() => {
           console.log("clicked");
-          wsConnect("ws://127.0.0.1:8000");
+          wsConnect("ws://127.0.0.1:8080", player.name);
           addPlayer(player.name);
           fetchActivePlayer(player.name);
         }}
