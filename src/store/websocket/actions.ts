@@ -8,9 +8,10 @@ export const WS_DISCONNECTED = "WS_DISCONNECTED";
 export const WS_NEW_MESSAGE = "WS_NEW_MESSAGE";
 
 export const wsNewMessage = createAction(WS_NEW_MESSAGE, (action) => {
-  return (message: string) =>
+  return (type: string, body: string) =>
     action({
-      message: message,
+      type: type,
+      body: body,
     });
 });
 

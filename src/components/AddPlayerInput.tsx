@@ -6,6 +6,7 @@ import { wsConnect } from "../store/websocket/actions";
 
 type Props = {
   btnText: string;
+  onAddPlayer: (name: string) => void;
 };
 
 const dispatchProps = {
@@ -15,9 +16,7 @@ const dispatchProps = {
 };
 
 const AddPlayerInput: React.FC<Props & typeof dispatchProps> = ({
-  addPlayer,
-  fetchActivePlayer,
-  wsConnect,
+  onAddPlayer,
   btnText,
 }) => {
   const [player, setPlayer] = React.useState({
@@ -41,16 +40,7 @@ const AddPlayerInput: React.FC<Props & typeof dispatchProps> = ({
         type="text"
         placeholder="note"
       />
-      <button
-        onClick={() => {
-          console.log("clicked");
-          wsConnect("ws://127.0.0.1:8080", player.name);
-          addPlayer(player.name);
-          fetchActivePlayer(player.name);
-        }}
-      >
-        {btnText}
-      </button>
+      <button onClick={() => onAddPlayer(player.name)}>{btnText}</button>
     </>
   );
 };

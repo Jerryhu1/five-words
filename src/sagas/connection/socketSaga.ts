@@ -31,8 +31,8 @@ function* connectSocketFlow(action: SocketActions) {
       yield put(disconnect());
       break;
     case WS_NEW_MESSAGE:
-      console.log("sending message", action.payload.message);
-      yield put(send({ message: action.payload.message }));
+      console.log("sending message", action.payload);
+      yield put(send({ type: action.payload.type, body: action.payload.body }));
       break;
   }
 }
