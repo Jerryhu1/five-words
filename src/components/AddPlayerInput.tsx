@@ -11,7 +11,6 @@ type Props = {
 
 const dispatchProps = {
   addPlayer: addPlayer,
-  fetchActivePlayer: fetchActivePlayer,
   wsConnect: wsConnect,
 };
 

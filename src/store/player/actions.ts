@@ -28,10 +28,9 @@ export const addPlayer = createAction(ADD_PLAYER, (action) => {
 });
 
 export const fetchActivePlayer = createAction(FETCH_ACTIVE_PLAYER, (action) => {
-  return (name: string, room: string) =>
+  return (name: string) =>
     action({
       name: name,
-      room: room,
     });
 });
 

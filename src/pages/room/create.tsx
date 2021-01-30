@@ -22,8 +22,8 @@ const Create: React.FC<typeof dispatchProps & Props> = ({ createRoom }) => {
     <div>
       <AddPlayerInput
         btnText="Create room"
-        onAddPlayer={() => {
-          createRoom();
+        onAddPlayer={(name: string) => {
+          createRoom(name);
         }}
       />
     </div>
