@@ -9,8 +9,18 @@ export class RoomClient {
     this.http = http;
   }
 
-  createRoom = () => {
-    return this.http.get(`/room/create`);
+  createRoom = (
+    name: string,
+    playerName: string,
+    scoreGoal: number,
+    lang: string
+  ) => {
+    return this.http.post(`/room/create`, {
+      room: name,
+      playerName: playerName,
+      scoreGoal: scoreGoal,
+      language: lang,
+    });
   };
 
   addPlayerToRoom = (roomName: string, playerName: string) => {

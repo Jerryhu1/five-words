@@ -23,8 +23,14 @@ function* roomFlow(action: RoomActionTypes) {
     case CREATE_ROOM:
       try {
         // Register room in server, and update active room to response
-        const response: AxiosResponse = yield call(RoomClient.createRoom);
-        yield put({ type: SET_ACTIVE_ROOM, payload: response.data.roomName });
+        const response: AxiosResponse = yield call(
+          RoomClient.createRoom,
+          action.payload.roomName,
+          action.payload.playerName,
+          action.payload.scoreGoal,
+          action.payload.language
+        );
+        yield put({ type: SET_ACTIVE_ROOM, payload: response.data.name });
 
         // Dispatch action to add the player to the room,
         // Should return the id of the player
@@ -32,7 +38,7 @@ function* roomFlow(action: RoomActionTypes) {
         yield put({
           type: ADD_PLAYER_TO_ROOM,
           payload: {
-            roomName: response.data.roomName,
+            roomName: response.data.name,
             playerName: action.payload.playerName,
           },
         });
@@ -45,7 +51,7 @@ function* roomFlow(action: RoomActionTypes) {
         });
 
         // Route the user to the room
-        yield call(Router.push, "/room/" + response.data.roomName);
+        yield call(Router.push, "/room/" + response.data.name);
       } catch (err) {
         console.log(err);
       }

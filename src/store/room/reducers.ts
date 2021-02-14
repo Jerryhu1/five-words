@@ -5,7 +5,18 @@ import { RoomState } from "./types";
 export type RoomActionTypes = ActionType<typeof actions>;
 
 const initialState: RoomState = {
-  activeRoom: "",
+  name: "",
+  owner: "",
+  players: [],
+  teams: [],
+  scoreGoal: 0,
+  teamTurn: 0,
+  currentCard: {
+    id: "",
+    words: [],
+    correct: 0,
+  },
+  language: "",
 };
 
 export const roomReducer = (
@@ -17,7 +28,11 @@ export const roomReducer = (
       console.log(action);
       return {
         ...state,
+<<<<<<< HEAD
         activeRoom: action.payload.roomName,
+=======
+        ...action.payload,
+>>>>>>> 3e418a8 (integrate room endpoints with FE)
       };
     default:
       return state;
