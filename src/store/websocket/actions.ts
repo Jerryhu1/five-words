@@ -1,13 +1,16 @@
 import { createAction } from "typesafe-actions";
-
+import {
+  DEFAULT_PREFIX,
+  WEBSOCKET_MESSAGE,
+} from "@giantmachines/redux-websocket";
 export const WS_CONNECT = "WS_CONNECT";
 export const WS_CONNECTING = "WS_CONNECTING";
 export const WS_CONNECTED = "WS_CONNECTED";
 export const WS_DISCONNECT = "WS_DISCONNECT";
 export const WS_DISCONNECTED = "WS_DISCONNECTED";
-export const WS_NEW_MESSAGE = "WS_NEW_MESSAGE";
-
-export const wsNewMessage = createAction(WS_NEW_MESSAGE, (action) => {
+export const WS_SEND_MESSAGE = "WS_NEW_MESSAGE";
+export const WS_RECEIVE_MESSAGE = `${DEFAULT_PREFIX}::${WEBSOCKET_MESSAGE}`;
+export const wsNewMessage = createAction(WS_SEND_MESSAGE, (action) => {
   return (type: string, body: string) =>
     action({
       type: type,
@@ -16,6 +19,7 @@ export const wsNewMessage = createAction(WS_NEW_MESSAGE, (action) => {
 });
 
 export const wsConnect = createAction(WS_CONNECT, (action) => {
+  console.log("wsconnect");
   return (host: string, name: string) =>
     action({
       host: host,

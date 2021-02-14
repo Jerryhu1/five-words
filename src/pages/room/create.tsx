@@ -17,12 +17,16 @@ type Props = {
   activeRoom?: string;
 };
 
-const Create: React.FC<typeof dispatchProps & Props> = ({ createRoom }) => {
+const Create: React.FC<typeof dispatchProps & Props> = ({
+  createRoom,
+  wsConnect,
+}) => {
   return (
     <div>
       <AddPlayerInput
         btnText="Create room"
         onAddPlayer={(name: string) => {
+          wsConnect("ws://localhost:8080", name);
           createRoom(name);
         }}
       />

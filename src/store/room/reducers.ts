@@ -17,7 +17,7 @@ export const roomReducer = (
       console.log(action);
       return {
         ...state,
-        activeRoom: action.payload,
+        activeRoom: action.payload.roomName,
       };
     default:
       return state;
