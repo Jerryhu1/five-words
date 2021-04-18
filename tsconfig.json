@@ -25,5 +25,13 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  "moduleResolution": "node",
+  "baseUrl": ".",
+  "paths": {
+    "@components/*": ["./src/components*"],
+    "@sagas/*": ["./src/sagas*"],
+    "@store/*": ["./src/store*"],
+    "@modules/*": ["node_modules*"]
+  }
 }

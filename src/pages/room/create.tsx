@@ -1,83 +1,72 @@
 import React from "react";
-import { connect } from "react-redux";
-import { addPlayer } from "../../store/player/actions";
-import { wsConnect } from "../../store/websocket/actions";
-import { createRoom } from "../../store/room/actions";
-import { AppState } from "../..";
+import {connect} from "react-redux";
+import {connect as wsConnect} from "@giantmachines/redux-websocket";
+
+import {addPlayerToRoom, createRoom} from "../../store/room/actions";
+import {AppState} from "../..";
+import {setActivePlayer} from "../../store/player/actions";
+import PlayerForm from "./playerForm";
+import RoomForm from "./roomForm";
+import RoomClient from "../../client/room";
+import {router} from "next/client";
 
 const dispatchProps = {
-  addPlayer: addPlayer,
-  createRoom: createRoom,
+  setActivePlayer: setActivePlayer,
+  addPlayerToRoom: addPlayerToRoom,
   wsConnect: wsConnect,
 };
 
-<<<<<<< HEAD
 type Props = {
-  activeRoom?: string;
+  playerName: string
+  sessionID: string
 };
 
 const Create: React.FC<typeof dispatchProps & Props> = ({
-  createRoom,
-  wsConnect,
+  setActivePlayer,
+  addPlayerToRoom,
+  playerName,
+  sessionID,
+  wsConnect
 }) => {
+
+  const [showPlayerForm, setShowPlayerForm] = React.useState(true);
+
+  const onSubmitPlayerForm = (name: string) => {
+    wsConnect("ws://localhost:8080");
+    setActivePlayer("", name, "")
+    setShowPlayerForm(false)
+  }
+
+  const onSubmitRoomForm = (scoreGoal: number, language: string) => {
+    try {
+      // Register room in server, and update active room to response
+      RoomClient.createRoom(scoreGoal, language).then(res => {
+        addPlayerToRoom(res.data.name, sessionID, playerName)
+        router.push("/room/" + res.data.name)
+      }, err => {console.log(err)})
+    } catch (err) {
+
+    }
+  }
+
   return (
     <div>
-      <AddPlayerInput
-        btnText="Create room"
-        onAddPlayer={(name: string) => {
-          wsConnect("ws://localhost:8080", name);
-          createRoom(name);
-        }}
-=======
-type Props = {};
-const Create: React.FC<typeof dispatchProps & Props> = ({ createRoom }) => {
-  const [room, setRoom] = React.useState("");
-  const [player, setPlayer] = React.useState("");
-  const [scoreGoal, setScoreGoal] = React.useState(0);
-  const [language, setLanguage] = React.useState("");
-  return (
-    <div>
-      Room name:
-      <input
-        type="text"
-        name="roomName"
-        value={room}
-        onChange={(e) => setRoom(e.target.value)}
-      />
-      Score goal:
-      <input
-        type="number"
-        name="scoreGoal"
-        value={scoreGoal}
-        onChange={(e) => setScoreGoal(+e.target.value)}
->>>>>>> 3e418a8 (integrate room endpoints with FE)
-      />
-      Language:
-      <input
-        name="name"
-        onChange={(e) => setLanguage(e.target.value)}
-        value={language}
-        type="text"
-        placeholder="nl"
-      />
-      Player:
-      <input
-        name="name"
-        onChange={(e) => setPlayer(e.target.value)}
-        value={player}
-        type="text"
-      />
-      <button
-        onClick={() => {
-          createRoom(room, player, scoreGoal, language);
-        }}
-      >
-        Create
-      </button>
+      {
+        showPlayerForm ? <PlayerForm onSubmit={onSubmitPlayerForm} /> : (
+          <div>
+            Player: {playerName}
+            <RoomForm onSubmit={onSubmitRoomForm} />
+          </div>
+          )
+      }
+
     </div>
   );
-};
+}
 
-const mapStateToProps = (state: AppState, ownProps: Props) => ({});
+const mapStateToProps = (state: AppState, ownProps: Props) => ({
+  playerName: state.game.activePlayer.name,
+  sessionID: state.session.sessionID
+});
 
 export default connect(mapStateToProps, dispatchProps)(Create);

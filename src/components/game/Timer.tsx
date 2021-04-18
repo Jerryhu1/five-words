@@ -1,9 +1,9 @@
 import React from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { AppState } from "..";
-import { tickTimer } from "../store/timer/action";
-import { toggleSelect } from "../store/card/action";
+import { AppState } from "../..";
+import { tickTimer } from "../../store/timer/action";
+import { toggleSelect } from "../../store/card/action";
 type Props = {
   onTimeUp?: () => {};
   currTime?: number;

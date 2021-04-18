@@ -2,30 +2,26 @@ import {
   connect,
   disconnect,
   send,
-  WEBSOCKET_MESSAGE,
+  WEBSOCKET_CONNECT,
+  WEBSOCKET_DISCONNECT, WEBSOCKET_MESSAGE,
+  WEBSOCKET_SEND,
 } from "@giantmachines/redux-websocket/dist";
-import { Action } from "@giantmachines/redux-websocket/dist/types";
-import { put, takeLatest } from "redux-saga/effects";
-import {
-  WS_CONNECT,
-  WS_DISCONNECT,
-  WS_DISCONNECTED,
-  WS_RECEIVE_MESSAGE,
-  WS_SEND_MESSAGE,
-} from "../../store/websocket/actions";
-import { SocketActions } from "../../store/websocket/types";
+import {Action} from "@giantmachines/redux-websocket/dist/types";
+import {put, takeLatest, takeEvery} from "redux-saga/effects";
+import {SET_ROOM} from "../../store/room/types";
+import {SET_SESSION, WS_RECEIVE_MESSAGE, WS_SEND_MESSAGE} from "../../store/websocket/actions";
 
 export function* socketWatcher() {
   console.log("socket watcher");
-  yield takeLatest(WS_CONNECT, connectSocketFlow);
-  yield takeLatest(WS_DISCONNECT, connectSocketFlow);
-  yield takeLatest(WS_SEND_MESSAGE, connectSocketFlow);
-  yield takeLatest(WS_RECEIVE_MESSAGE, connectSocketMessageFlow);
+  yield takeLatest(WEBSOCKET_CONNECT, connectSocketFlow);
+  yield takeLatest(WEBSOCKET_DISCONNECT, connectSocketFlow);
+  yield takeLatest(WEBSOCKET_SEND, connectSocketFlow);
+  yield takeEvery(WS_RECEIVE_MESSAGE, connectSocketMessageFlow);
 }
 
-function* connectSocketFlow(action: SocketActions) {
+function* connectSocketFlow(action: Action) {
   switch (action.type) {
-    case WS_CONNECT:
+    case WEBSOCKET_CONNECT:
       console.log("connecting to :", action.payload.host);
       yield put(connect(action.payload.host));
       let msg = {
@@ -33,21 +29,32 @@ function* connectSocketFlow(action: SocketActions) {
       };
       yield put(send({ message: {} }));
       break;
-    case WS_DISCONNECT:
+    case WEBSOCKET_DISCONNECT:
       console.log("disconnecting");
       yield put(disconnect());
       break;
-    case WS_SEND_MESSAGE:
-      console.log("sending message", action.payload);
+    case WEBSOCKET_SEND:
       yield put(send({ type: action.payload.type, body: action.payload.body }));
       break;
   }
 }
 
-function* connectSocketMessageFlow(action: SocketActions) {
+function* connectSocketMessageFlow(action: Action) {
+  console.log("socketmessageflow")
   switch (action.type) {
     case WS_RECEIVE_MESSAGE:
-      console.log("received message: ", action.payload);
+      const message = JSON.parse(action.payload.message)
+      console.log("received message: ", message);
+
+      switch (message.type) {
+        case "CLIENT_REGISTERED":
+          yield put({type: SET_SESSION, payload: { sessionID: message.body}})
+          break;
+        case "SET_ROOM":
+          console.log(message)
+          yield put({type: SET_ROOM, payload: { newState: message.body} } )
+          break;
+      }
       break;
   }
 }

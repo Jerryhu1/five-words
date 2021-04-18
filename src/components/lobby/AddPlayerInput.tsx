@@ -1,8 +1,8 @@
 import React, { ChangeEvent } from "react";
-import { addPlayer, fetchActivePlayer } from "../store/player/actions";
+import { addPlayer, fetchActivePlayer } from "../../store/player/actions";
 import { connect } from "react-redux";
-import { AppState } from "..";
-import { wsConnect } from "../store/websocket/actions";
+import { AppState } from "../..";
+import { wsConnect } from "../../store/websocket/actions";
 
 type Props = {
   btnText: string;
@@ -11,7 +11,6 @@ type Props = {
 
 const dispatchProps = {
   addPlayer: addPlayer,
-  wsConnect: wsConnect,
 };
 
 const AddPlayerInput: React.FC<Props & typeof dispatchProps> = ({

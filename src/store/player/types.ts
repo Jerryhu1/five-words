@@ -1,4 +1,4 @@
-export const ADD_TEAM_PLAYER = "ADD_PLAYER_TEAM";
+export const ADD_TEAM_PLAYER = "ADD_TEAM_PLAYER";
 export const ADD_TEAM_PLAYER_OK = "ADD_PLAYER_OK";
 export const ADD_PLAYER = "ADD_PLAYER";
 export const ADD_TEAM = "ADD_TEAM";
@@ -14,14 +14,14 @@ export interface Player {
 export interface Team {
   id: string;
   name: string;
-  players: Player[];
+  players: Map<string, Player>;
   points: number;
   cards: number[];
 }
 
 export interface GameState {
   teams: Team[];
-  players: Player[];
+  players: Map<string, Player>;
   winner: number;
   goalScore: number;
   turn: number;

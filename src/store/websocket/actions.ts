@@ -9,7 +9,9 @@ export const WS_CONNECTED = "WS_CONNECTED";
 export const WS_DISCONNECT = "WS_DISCONNECT";
 export const WS_DISCONNECTED = "WS_DISCONNECTED";
 export const WS_SEND_MESSAGE = "WS_NEW_MESSAGE";
+export const SET_SESSION = "SET_SESSION";
 export const WS_RECEIVE_MESSAGE = `${DEFAULT_PREFIX}::${WEBSOCKET_MESSAGE}`;
+
 export const wsNewMessage = createAction(WS_SEND_MESSAGE, (action) => {
   return (type: string, body: string) =>
     action({
@@ -19,11 +21,9 @@ export const wsNewMessage = createAction(WS_SEND_MESSAGE, (action) => {
 });
 
 export const wsConnect = createAction(WS_CONNECT, (action) => {
-  console.log("wsconnect");
-  return (host: string, name: string) =>
+  return (host: string) =>
     action({
       host: host,
-      name: name,
     });
 });
 
@@ -54,3 +54,10 @@ export const wsDisconnected = createAction(WS_DISCONNECTED, (action) => {
       host: host,
     });
 });
+
+export const setSession = createAction(SET_SESSION, (action) => {
+  return (sessionID: string) =>
+    action({
+      sessionID: sessionID
+    })
+})

@@ -35,15 +35,25 @@ export const fetchActivePlayer = createAction(FETCH_ACTIVE_PLAYER, (action) => {
 });
 
 export const setActivePlayer = createAction(SET_ACTIVE_PLAYER, (action) => {
-  return (player: Player) => action(player);
+  return (id: string, name: string, teamID: string) => action({
+    id: id,
+    name: name,
+    teamID: teamID
+  });
 });
 
 export const addTeamPlayer = createAction(ADD_TEAM_PLAYER, (action) => {
-  return (player: Player, teamID: string, index: number) =>
+  return (
+    roomName: string,
+    playerName: string,
+    newTeam: string,
+    oldTeam: string
+  ) =>
     action({
-      player: player,
-      teamID: teamID,
-      teamIndex: index,
+      roomName: roomName,
+      playerID: playerName,
+      newTeam: newTeam,
+      oldTeam: oldTeam,
     });
 });
 

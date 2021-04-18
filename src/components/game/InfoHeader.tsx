@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
-import { AppState } from "..";
-import { Team } from "../store/player/types";
+import { AppState } from "../..";
+import { Team } from "../../store/player/types";
 
 type Props = {
   currTeam?: Team;
