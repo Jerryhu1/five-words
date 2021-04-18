@@ -1,22 +1,10 @@
 import {createAction} from "typesafe-actions";
 import {
   ADD_PLAYER_TO_ROOM,
-  CREATE_ROOM,
   GET_ROOM,
   RoomState,
   SET_ACTIVE_ROOM, SET_ROOM,
 } from "./types";
-
-export const createRoom = createAction(CREATE_ROOM, (action) => {
-  return (
-    scoreGoal: number,
-    language: string
-  ) =>
-    action({
-      scoreGoal: scoreGoal,
-      language: language,
-    });
-});
 
 export const setActiveRoom = createAction(SET_ACTIVE_ROOM, (action) => {
   return (roomState: RoomState) => action(roomState);

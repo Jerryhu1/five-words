@@ -1,23 +1,12 @@
 import { put, takeLatest } from "redux-saga/effects";
-import {} from "../../store/player/actions";
 import { PlayerActionTypes } from "../../store/player/reducers";
 import {
   ADD_TEAM_PLAYER,
-  ADD_TEAM_PLAYER_OK,
-  REMOVE_TEAM_PLAYER,
 } from "../../store/player/types";
 import { WS_SEND_MESSAGE } from "../../store/websocket/actions";
 
 export function* addTeamPlayerWatcher() {
   yield takeLatest(ADD_TEAM_PLAYER, addTeamPlayerFlow);
-}
-
-interface AddTeamPlayerMessage {
-  type: string;
-  roomName: string;
-  playerName: string;
-  oldTeam: string;
-  newTeam: string;
 }
 
 function* addTeamPlayerFlow(action: PlayerActionTypes) {

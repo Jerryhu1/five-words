@@ -2,7 +2,7 @@ import React from "react";
 import {connect} from "react-redux";
 import {connect as wsConnect} from "@giantmachines/redux-websocket";
 
-import {addPlayerToRoom, createRoom} from "../../store/room/actions";
+import {addPlayerToRoom} from "../../store/room/actions";
 import {AppState} from "../..";
 import {setActivePlayer} from "../../store/player/actions";
 import PlayerForm from "./playerForm";
