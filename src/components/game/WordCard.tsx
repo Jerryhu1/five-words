@@ -1,10 +1,10 @@
 import React from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { AppState } from "..";
+import { AppState } from "../../";
 import WordRow from "./WordRow";
-import { startTimer } from "../store/timer/action";
-import { Card } from "../store/card/type";
+import { startTimer } from "../../store/timer/action";
+import { Card } from "../../store/card/type";
 type Props = {
   card?: Card;
   showWords?: boolean;

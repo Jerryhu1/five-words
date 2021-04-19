@@ -27,13 +27,6 @@ export const addPlayer = createAction(ADD_PLAYER, (action) => {
     });
 });
 
-export const fetchActivePlayer = createAction(FETCH_ACTIVE_PLAYER, (action) => {
-  return (name: string) =>
-    action({
-      name: name,
-    });
-});
-
 export const setActivePlayer = createAction(SET_ACTIVE_PLAYER, (action) => {
   return (id: string, name: string, teamID: string) => action({
     id: id,

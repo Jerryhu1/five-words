@@ -1,8 +1,7 @@
 import React, { ChangeEvent } from "react";
-import { addPlayer, fetchActivePlayer } from "../../store/player/actions";
+import { addPlayer } from "../../store/player/actions";
 import { connect } from "react-redux";
 import { AppState } from "../..";
-import { wsConnect } from "../../store/websocket/actions";
 
 type Props = {
   btnText: string;
