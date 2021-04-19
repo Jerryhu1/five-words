@@ -6,6 +6,7 @@ import { Player, Team } from "../../store/player/types";
 type Props = {
   teams?: Map<string, Team>;
   player?: Player;
+  players?: Player[];
   roomName: string;
 };
 
@@ -18,9 +19,20 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
   teams,
   roomName,
   addTeamPlayer,
+  players
 }) => {
   return (
     <>
+      <div>
+        <li>
+        Players:
+        {
+          players?.map(p => (
+            <ul>{p.name}</ul>
+          ))
+        }
+        </li>
+      </div>
       <div>Team</div>
       {!teams || !player
         ? null
@@ -60,6 +72,7 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
   teams: state.room.teams,
   player: state.game.activePlayer,
+  players: Array.from(Object.values(state.room.players)),
   roomName: state.room.name,
 });
 

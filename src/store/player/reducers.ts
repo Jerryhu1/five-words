@@ -33,8 +33,8 @@ const initialState: GameState = {
   turn: 0,
   gameID: "test",
   activePlayer: {
-    id: "test",
-    name: "test",
+    id: "",
+    name: "",
     teamID: "",
   },
 };

@@ -32,6 +32,7 @@ const Create: React.FC<typeof dispatchProps & Props> = ({
   const [showPlayerForm, setShowPlayerForm] = React.useState(true);
 
   const onSubmitPlayerForm = (name: string) => {
+    // TODO: Determine host dynamically, or place somewhere else
     wsConnect("ws://localhost:8080");
     setActivePlayer("", name, "")
     setShowPlayerForm(false)
