@@ -4,6 +4,7 @@ import {
   ADD_TEAM_PLAYER,
 } from "../../store/player/types";
 import { WS_SEND_MESSAGE } from "../../store/websocket/actions";
+import {WEBSOCKET_MESSAGE} from "@giantmachines/redux-websocket/dist";
 
 export function* addTeamPlayerWatcher() {
   yield takeLatest(ADD_TEAM_PLAYER, addTeamPlayerFlow);
@@ -11,9 +12,6 @@ export function* addTeamPlayerWatcher() {
 
 function* addTeamPlayerFlow(action: PlayerActionTypes) {
   if (action.type === ADD_TEAM_PLAYER) {
-    yield put({
-      type: WS_SEND_MESSAGE,
-      payload: { type: "ADD_TEAM_PLAYER", body: action.payload },
-    });
+    yield put({ type: WEBSOCKET_MESSAGE, body: action.payload } )
   }
 }

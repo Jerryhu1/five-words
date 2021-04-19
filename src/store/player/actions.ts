@@ -38,13 +38,13 @@ export const setActivePlayer = createAction(SET_ACTIVE_PLAYER, (action) => {
 export const addTeamPlayer = createAction(ADD_TEAM_PLAYER, (action) => {
   return (
     roomName: string,
-    playerName: string,
+    playerID: string,
     newTeam: string,
     oldTeam: string
   ) =>
     action({
       roomName: roomName,
-      playerID: playerName,
+      playerID: playerID,
       newTeam: newTeam,
       oldTeam: oldTeam,
     });

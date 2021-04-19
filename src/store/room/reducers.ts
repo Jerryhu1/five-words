@@ -33,7 +33,7 @@ export const roomReducer = (
     case getType(actions.setRoom):
       return {
         ...state,
-        ...action.payload
+        ...action.payload.newState
       }
     default:
       return state;

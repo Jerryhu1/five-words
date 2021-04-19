@@ -5,7 +5,7 @@ import { Player, Team } from "../../store/player/types";
 
 type Props = {
   teams?: Map<string, Team>;
-  player?: Player;
+  activePlayer?: Player;
   players?: Player[];
   roomName: string;
 };
@@ -15,7 +15,7 @@ const dispatchProps = {
 };
 
 const Lobby: React.FC<Props & typeof dispatchProps> = ({
-  player,
+  activePlayer,
   teams,
   roomName,
   addTeamPlayer,
@@ -34,7 +34,7 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
         </li>
       </div>
       <div>Team</div>
-      {!teams || !player
+      {!teams || !activePlayer
         ? null
         : Object.values(teams).map((team: Team, _) => (
             <div key={team.name}>
@@ -45,18 +45,18 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
                 ))}
               </ul>
               {team.players.size > 0 ||
-              Object.values(team.players).filter((el) => el.id == player.id)
+              Object.values(team.players).filter((el) => el.id === activePlayer.id)
                 .length > 0 ? null : (
                 <button
                   key={team.id}
                   onClick={() =>
-                    !player
+                    !activePlayer
                       ? null
                       : addTeamPlayer(
                           roomName,
-                          player.name,
+                          activePlayer.id,
                           team.name,
-                          player.teamID
+                          activePlayer.teamID
                         )
                   }
                 >
@@ -71,7 +71,7 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
 
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
   teams: state.room.teams,
-  player: state.game.activePlayer,
+  activePlayer: state.game.activePlayer,
   players: Array.from(Object.values(state.room.players)),
   roomName: state.room.name,
 });
