@@ -22,13 +22,13 @@ const dispatchProps = {
 };
 
 const Room: React.FC<Props & typeof dispatchProps> = ({
-                                                        getRoom,
-                                                        wsConnect,
-                                                        activePlayer,
-                                                        sessionID,
-                                                        addPlayerToRoom,
-                                                        setActivePlayer
-                                                      }) => {
+    getRoom,
+    wsConnect,
+    activePlayer,
+    sessionID,
+    addPlayerToRoom,
+    setActivePlayer
+  }) => {
   const router = useRouter();
   const {roomName} = router.query;
   // Redirect user to player register page first
@@ -47,13 +47,12 @@ const Room: React.FC<Props & typeof dispatchProps> = ({
     if (sessionID === "") {
       wsConnect("ws://localhost:8080");
     }
-  }, [activePlayer, sessionID])
+  }, [wsConnect, activePlayer, sessionID])
 
 
   const onPlayerFormSubmit = (name: string) => {
     // TODO: Determine host dynamically, or place somewhere else
-    setActivePlayer("", name, "")
-
+    setActivePlayer(name, "")
     addPlayerToRoom(roomName as string, sessionID, name)
     setShowPlayerForm(false)
   }

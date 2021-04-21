@@ -56,7 +56,6 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
                           roomName,
                           activePlayer.id,
                           team.name,
-                          activePlayer.teamID
                         )
                   }
                 >

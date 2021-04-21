@@ -2,10 +2,9 @@ import {
   ADD_PLAYER,
   ADD_TEAM_PLAYER,
   ADD_TEAM_PLAYER_OK,
-  FETCH_ACTIVE_PLAYER,
   Player,
   REMOVE_TEAM_PLAYER,
-  SET_ACTIVE_PLAYER,
+  SET_ACTIVE_PLAYER, SET_ACTIVE_PLAYER_ID,
 } from "./types";
 import cuid from "cuid";
 import { createAction } from "typesafe-actions";
@@ -28,10 +27,15 @@ export const addPlayer = createAction(ADD_PLAYER, (action) => {
 });
 
 export const setActivePlayer = createAction(SET_ACTIVE_PLAYER, (action) => {
-  return (id: string, name: string, teamID: string) => action({
-    id: id,
+  return (name: string, teamID: string) => action({
     name: name,
     teamID: teamID
+  });
+});
+
+export const setActivePlayerId = createAction(SET_ACTIVE_PLAYER_ID, (action) => {
+  return (id: string) => action({
+    id: id,
   });
 });
 
@@ -40,13 +44,11 @@ export const addTeamPlayer = createAction(ADD_TEAM_PLAYER, (action) => {
     roomName: string,
     playerID: string,
     newTeam: string,
-    oldTeam: string
   ) =>
     action({
       roomName: roomName,
       playerID: playerID,
       newTeam: newTeam,
-      oldTeam: oldTeam,
     });
 });
 

@@ -59,9 +59,17 @@ export const playerReducer = (
       return {
         ...state,
         activePlayer: {
+          ...state.activePlayer,
           name: action.payload.name,
-          id: action.payload.id,
           teamID: action.payload.teamID,
+        },
+      };
+    case getType(actions.setActivePlayerId):
+      return {
+        ...state,
+        activePlayer: {
+          ...state.activePlayer,
+          id: action.payload.id
         },
       };
     case getType(actions.addTeamPlayerOk):
