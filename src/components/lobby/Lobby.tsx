@@ -28,7 +28,7 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
         Players:
         {
           players?.map(p => (
-            <ul>{p.name}</ul>
+            <ul style={!p.isActive ? {color: 'grey'} : {color: 'blue'}}>{p.name}</ul>
           ))
         }
         </li>
@@ -41,7 +41,10 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
               <h1>{team.name}</h1>
               <ul>
                 {Object.values(team.players).map((player) => (
-                  <li key={player.name}>{player.name}</li>
+                  <li style={player.name === activePlayer.name ? {fontWeight: "bold"} : {}}
+                      key={player.name}>
+                    {player.name}
+                  </li>
                 ))}
               </ul>
               {team.players.size > 0 ||
