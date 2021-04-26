@@ -9,21 +9,21 @@ const initialState: GameState = {
       cards: [],
       id: "",
       name: "Red",
-      players: new Map<string, Player>(),
+      players: [],
       points: 0,
     },
     {
       cards: [],
       id: "",
       name: "Blue",
-      players: new Map<string, Player>(),
+      players: [],
       points: 0,
     },
     {
       cards: [],
       id: "",
       name: "Yellow",
-      players: new Map<string, Player>(),
+      players: [],
       points: 0,
     },
   ],
@@ -36,6 +36,7 @@ const initialState: GameState = {
     id: "",
     name: "",
     teamID: "",
+    isActive: false
   },
 };
 
@@ -44,17 +45,6 @@ export const playerReducer = (
   action: PlayerActionTypes
 ): GameState => {
   switch (action.type) {
-    // case getType(actions.addPlayer):
-    //   return {
-    //     ...state,
-    //     players: [
-    //       ...state.players,
-    //       {
-    //         ...action.payload,
-    //         teamID: "",
-    //       },
-    //     ],
-    //   };
     case getType(actions.setActivePlayer):
       return {
         ...state,
@@ -72,58 +62,6 @@ export const playerReducer = (
           id: action.payload.id
         },
       };
-    case getType(actions.addTeamPlayerOk):
-      // console.log(
-      //   ...state.teams.slice(action.payload.teamIndex + 1, state.teams.length)
-      // );
-      // return {
-      //   ...state,
-      //   teams: [
-      //     ...state.teams.slice(0, action.payload.teamIndex),
-      //     {
-      //       ...state.teams[action.payload.teamIndex],
-      //       players: state.teams[action.payload.teamIndex].players.concat(
-      //         action.payload.player
-      //       ),
-      //     },
-      //     ...state.teams.slice(
-      //       action.payload.teamIndex + 1,
-      //       state.teams.length
-      //     ),
-      //   ],
-      // };
-    case getType(actions.removeTeamPlayer):
-      // console.log(action.payload.player);
-      // if (action.payload.player.teamID == "") {
-      //   return state;
-      // }
-      //
-      // const team = state.teams.filter(
-      //   (v) => v.id === action.payload.player.teamID
-      // )[0];
-      // const removeIndex = team.players.findIndex(
-      //   (v) => v.id === action.payload.player.id
-      // );
-      //
-      // return {
-      //   ...state,
-      //   teams: [
-      //     ...state.teams.slice(0, action.payload.teamIndex),
-      //     {
-      //       ...state.teams[action.payload.teamIndex],
-      //       players: [
-      //         ...state.teams[action.payload.teamIndex].players.slice(
-      //           0,
-      //           removeIndex
-      //         ),
-      //         ...state.teams[action.payload.teamIndex].players.slice(
-      //           removeIndex + 1,
-      //           state.teams[action.payload.teamIndex].players.length
-      //         ),
-      //       ],
-      //     },
-      //   ],
-      // };
     default:
       return state;
   }

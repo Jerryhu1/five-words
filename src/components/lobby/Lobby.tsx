@@ -6,7 +6,7 @@ import { Player, Team } from "../../store/player/types";
 type Props = {
   teams?: Map<string, Team>;
   activePlayer?: Player;
-  players?: Player[];
+  players?: Map<string, Player>;
   roomName: string;
 };
 
@@ -27,8 +27,8 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
         <li>
         Players:
         {
-          players?.map(p => (
-            <ul style={!p.isActive ? {color: 'grey'} : {color: 'blue'}}>{p.name}</ul>
+          !players ? null : Array.from(players).map(([k, v]) => (
+            <ul style={!v.isActive ? {color: 'grey'} : {color: 'blue'}}>{v.name}</ul>
           ))
         }
         </li>
@@ -40,16 +40,14 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
             <div key={team.name}>
               <h1>{team.name}</h1>
               <ul>
-                {Object.values(team.players).map((player) => (
-                  <li style={player.name === activePlayer.name ? {fontWeight: "bold"} : {}}
-                      key={player.name}>
-                    {player.name}
+                {team.players.map((player) => (
+                  <li style={player === activePlayer.id ? {fontWeight: "bold"} : {}}
+                      key={player}>
+                    {players ? players.get(player)?.name : ""}
                   </li>
                 ))}
               </ul>
-              {team.players.size > 0 ||
-              Object.values(team.players).filter((el) => el.id === activePlayer.id)
-                .length > 0 ? null : (
+              {team.players.filter((el) => el === activePlayer.id).length > 0 ? null : (
                 <button
                   key={team.id}
                   onClick={() =>
@@ -74,7 +72,7 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
   teams: state.room.teams,
   activePlayer: state.game.activePlayer,
-  players: Array.from(Object.values(state.room.players)),
+  players: state.room.players,
   roomName: state.room.name,
 });
 

@@ -7,7 +7,7 @@ import {
   ADD_PLAYER_TO_ROOM,
   CREATE_ROOM,
   GET_ROOM,
-  SET_ACTIVE_ROOM,
+  SET_ROOM,
 } from "../../store/room/types";
 import {WEBSOCKET_SEND} from "@giantmachines/redux-websocket/dist";
 
@@ -27,7 +27,7 @@ function* roomFlow(action: RoomActionTypes) {
         RoomClient.getRoom,
         action.payload.roomName
       );
-      yield put({ type: SET_ACTIVE_ROOM, payload: response.data });
+      yield put({ type: SET_ROOM, payload: { newState: response.data } });
       break;
     case ADD_PLAYER_TO_ROOM:
       try {

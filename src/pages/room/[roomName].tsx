@@ -22,32 +22,34 @@ const dispatchProps = {
 };
 
 const Room: React.FC<Props & typeof dispatchProps> = ({
-    getRoom,
-    wsConnect,
-    activePlayer,
-    sessionID,
-    addPlayerToRoom,
-    setActivePlayer
-  }) => {
+  getRoom,
+  wsConnect,
+  activePlayer,
+  sessionID,
+  addPlayerToRoom,
+  setActivePlayer
+}) => {
   const router = useRouter();
   const {roomName} = router.query;
-  // Redirect user to player register page first
-  if (roomName) {
-    if (typeof roomName === "string") {
-      getRoom(roomName);
+  React.useEffect(() => {
+    if (roomName) {
+      if (typeof roomName === "string") {
+        getRoom(roomName);
+      }
     }
-  }
-
+  }, [])
 
   const [showPlayerForm, setShowPlayerForm] = React.useState(false)
   React.useEffect(() => {
+    // Redirect user to player register page first
+
     if (activePlayer.name === "") {
       setShowPlayerForm(true)
     }
     if (sessionID === "") {
       wsConnect("ws://localhost:8080");
     }
-  }, [wsConnect, activePlayer, sessionID])
+  }, [getRoom, wsConnect, activePlayer, sessionID])
 
 
   const onPlayerFormSubmit = (name: string) => {

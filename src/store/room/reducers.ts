@@ -1,4 +1,4 @@
-import { ActionType, getType } from "typesafe-actions";
+import {Action, ActionType, getType} from "typesafe-actions";
 import { Player, Team } from "../player/types";
 import * as actions from "./actions";
 import { RoomState } from "./types";
@@ -31,9 +31,11 @@ export const roomReducer = (
         ...action.payload,
       };
     case getType(actions.setRoom):
+      const players = new Map<string, Player>(Object.entries(action.payload.newState.players))
       return {
         ...state,
-        ...action.payload.newState
+        ...action.payload.newState,
+        players: players
       }
     default:
       return state;
