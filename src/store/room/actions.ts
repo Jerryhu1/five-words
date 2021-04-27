@@ -3,7 +3,7 @@ import {
   ADD_PLAYER_TO_ROOM,
   GET_ROOM,
   RoomState,
-  SET_ACTIVE_ROOM, SET_ROOM,
+  SET_ACTIVE_ROOM, SET_ROOM, START_GAME,
 } from "./types";
 
 export const setActiveRoom = createAction(SET_ACTIVE_ROOM, (action) => {
@@ -32,3 +32,10 @@ export const setRoom = createAction(SET_ROOM, (action) => {
       newState: newState
     });
 });
+
+export const startGame = createAction(START_GAME, (action) => {
+  return (roomName: string) =>
+    action({
+      roomName: roomName
+    })
+})

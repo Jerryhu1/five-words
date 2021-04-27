@@ -2,69 +2,41 @@ import { connect } from "react-redux";
 import { AppState } from "../..";
 import { addTeamPlayer } from "../../store/player/actions";
 import { Player, Team } from "../../store/player/types";
+import TeamDisplay from "./TeamDisplay";
+import {Game} from "../game/Game";
+import React from "react";
+import {startGame} from "../../store/room/actions";
 
 type Props = {
   teams?: Map<string, Team>;
   activePlayer?: Player;
   players?: Map<string, Player>;
-  roomName: string;
+  roomName?: string;
 };
 
 const dispatchProps = {
-  addTeamPlayer: addTeamPlayer,
+  startGame: startGame,
 };
 
 const Lobby: React.FC<Props & typeof dispatchProps> = ({
-  activePlayer,
-  teams,
-  roomName,
-  addTeamPlayer,
-  players
+  startGame,
+  roomName
 }) => {
+  const [showGame, setShowGame] = React.useState(false)
+
+  const onStartGame = (roomName: string) => {
+    startGame(roomName)
+    setShowGame(true)
+  }
   return (
     <>
+      {roomName &&
       <div>
-        <li>
-        Players:
-        {
-          !players ? null : Array.from(players).map(([k, v]) => (
-            <ul style={!v.isActive ? {color: 'grey'} : {color: 'blue'}}>{v.name}</ul>
-          ))
-        }
-        </li>
+          <button onClick={() => onStartGame(roomName)}>Start game</button>
+          <TeamDisplay/>
+        {showGame && <Game/>}
       </div>
-      <div>Team</div>
-      {!teams || !activePlayer
-        ? null
-        : Object.values(teams).map((team: Team, _) => (
-            <div key={team.name}>
-              <h1>{team.name}</h1>
-              <ul>
-                {team.players.map((player) => (
-                  <li style={player === activePlayer.id ? {fontWeight: "bold"} : {}}
-                      key={player}>
-                    {players ? players.get(player)?.name : ""}
-                  </li>
-                ))}
-              </ul>
-              {team.players.filter((el) => el === activePlayer.id).length > 0 ? null : (
-                <button
-                  key={team.id}
-                  onClick={() =>
-                    !activePlayer
-                      ? null
-                      : addTeamPlayer(
-                          roomName,
-                          activePlayer.id,
-                          team.name,
-                        )
-                  }
-                >
-                  Join {team.name}
-                </button>
-              )}
-            </div>
-          ))}
+      }
     </>
   );
 };
@@ -73,7 +45,7 @@ const mapStateToProps = (state: AppState, ownProps: Props) => ({
   teams: state.room.teams,
   activePlayer: state.game.activePlayer,
   players: state.room.players,
-  roomName: state.room.name,
+  roomName: state.room.name
 });
 
 export default connect(mapStateToProps, dispatchProps)(Lobby);

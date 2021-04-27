@@ -11,7 +11,7 @@ const initialState: RoomState = {
   players: new Map<string, Player>(),
   teams: new Map<string, Team>(),
   scoreGoal: 0,
-  teamTurn: 0,
+  teamTurn: "",
   currentCard: {
     id: "",
     words: [],
@@ -32,10 +32,12 @@ export const roomReducer = (
       };
     case getType(actions.setRoom):
       const players = new Map<string, Player>(Object.entries(action.payload.newState.players))
+      const teams = new Map<string, Team>(Object.entries(action.payload.newState.teams))
       return {
         ...state,
         ...action.payload.newState,
-        players: players
+        players: players,
+        teams: teams
       }
     default:
       return state;

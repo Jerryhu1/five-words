@@ -3,14 +3,14 @@ import {
   disconnect,
   send,
   WEBSOCKET_CONNECT,
-  WEBSOCKET_DISCONNECT, WEBSOCKET_MESSAGE,
+  WEBSOCKET_DISCONNECT,
   WEBSOCKET_SEND,
 } from "@giantmachines/redux-websocket/dist";
 import {Action} from "@giantmachines/redux-websocket/dist/types";
 import {put, takeLatest, takeEvery} from "redux-saga/effects";
 import {SET_ROOM} from "../../store/room/types";
-import {SET_SESSION, WS_RECEIVE_MESSAGE, WS_SEND_MESSAGE} from "../../store/websocket/actions";
-import {Player, SET_ACTIVE_PLAYER_ID} from "../../store/player/types";
+import {SET_SESSION, WS_RECEIVE_MESSAGE} from "../../store/websocket/actions";
+import {SET_ACTIVE_PLAYER_ID} from "../../store/player/types";
 
 export function* socketWatcher() {
   yield takeLatest(WEBSOCKET_CONNECT, connectSocketFlow);

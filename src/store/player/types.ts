@@ -18,6 +18,7 @@ export interface Team {
   players: string[];
   points: number;
   cards: number[];
+  currExplainer: string;
 }
 
 export interface GameState {

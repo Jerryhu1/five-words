@@ -1,19 +1,14 @@
-import { AxiosResponse } from "axios";
-   import { call, put, takeLatest } from "redux-saga/effects";
+import {AxiosResponse} from "axios";
+import {call, put, takeLatest} from "redux-saga/effects";
 import RoomClient from "../../client/room";
-import {ADD_TEAM_PLAYER, FETCH_ACTIVE_PLAYER, SET_ACTIVE_PLAYER} from "../../store/player/types";
-import { RoomActionTypes } from "../../store/room/reducers";
-import {
-  ADD_PLAYER_TO_ROOM,
-  CREATE_ROOM,
-  GET_ROOM,
-  SET_ROOM,
-} from "../../store/room/types";
+import {FETCH_ACTIVE_PLAYER} from "../../store/player/types";
+import {RoomActionTypes} from "../../store/room/reducers";
+import {ADD_PLAYER_TO_ROOM, CREATE_ROOM, GET_ROOM, SET_ROOM, START_GAME,} from "../../store/room/types";
 import {WEBSOCKET_SEND} from "@giantmachines/redux-websocket/dist";
 
 export function* roomWatcher() {
   yield takeLatest(
-    [CREATE_ROOM, ADD_PLAYER_TO_ROOM, GET_ROOM, FETCH_ACTIVE_PLAYER],
+    [CREATE_ROOM, ADD_PLAYER_TO_ROOM, GET_ROOM, FETCH_ACTIVE_PLAYER, START_GAME],
     roomFlow
   );
 }
@@ -35,6 +30,19 @@ function* roomFlow(action: RoomActionTypes) {
           type: WEBSOCKET_SEND,
           payload: {
             type: "ADD_PLAYER_TO_ROOM",
+            body: action.payload,
+          },
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      break;
+    case START_GAME:
+      try {
+        yield put({
+          type: WEBSOCKET_SEND,
+          payload: {
+            type: "START_GAME",
             body: action.payload,
           },
         });

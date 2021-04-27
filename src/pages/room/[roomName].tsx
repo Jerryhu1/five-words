@@ -65,7 +65,7 @@ const Room: React.FC<Props & typeof dispatchProps> = ({
         showPlayerForm ? <PlayerForm onSubmit={onPlayerFormSubmit}/> : (
           <div>
             <h1>{roomName}</h1>
-            <Lobby roomName={roomName as string}/>
+            <Lobby />
           </div>
         )
       }

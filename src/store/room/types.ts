@@ -6,6 +6,7 @@ export const ADD_PLAYER_TO_ROOM = "ADD_PLAYER_TO_ROOM";
 export const SET_ACTIVE_ROOM = "SET_ACTIVE_ROOM";
 export const GET_ROOM = "GET_ROOM";
 export const SET_ROOM = "SET_ROOM";
+export const START_GAME = "START_GAME";
 
 export interface RoomState {
   name: string;
@@ -13,7 +14,7 @@ export interface RoomState {
   players: Map<string, Player>;
   teams: Map<string, Team>;
   scoreGoal: number;
-  teamTurn: number;
+  teamTurn: string;
   currentCard: Card;
   language: string;
 }
