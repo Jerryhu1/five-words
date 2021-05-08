@@ -1,6 +1,7 @@
-import { put, takeLatest } from "redux-saga/effects";
-import { SHOW_WORDS } from "../../store/card/type";
-import { START_TIMER, TimerActionTypes } from "../../store/timer/type";
+import {put, takeLatest} from "redux-saga/effects";
+import {START_TIMER} from "../../store/timer/types";
+import {TimerActionTypes} from "../../store/timer/reducers";
+import {WEBSOCKET_SEND} from "@giantmachines/redux-websocket/dist";
 
 // When TIMER_START executes
 // Run a saga that dispatches an increment action each second
@@ -11,7 +12,14 @@ export function* startTimerWatcher() {
 }
 
 function* startTimerFlow(action: TimerActionTypes) {
-  if (action.type === START_TIMER) {
-    yield put({ type: SHOW_WORDS });
+  switch(action.type) {
+    case START_TIMER:
+      yield put({
+        type: WEBSOCKET_SEND,
+        payload: {
+          type: START_TIMER,
+          body: action.payload
+        }
+      })
   }
 }

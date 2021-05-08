@@ -3,7 +3,7 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "../../";
 import WordRow from "./WordRow";
-import { startTimer } from "../../store/timer/action";
+import { startTimer } from "../../store/timer/actions";
 import { Card } from "../../store/card/type";
 type Props = {
   card?: Card;
@@ -12,7 +12,6 @@ type Props = {
 };
 
 type Dispatchers = {
-  startTimer: () => {};
 };
 
 const submit = () => {};
@@ -20,7 +19,6 @@ const submit = () => {};
 const WordCard: React.FC<Props & Dispatchers> = ({
   card,
   showWords,
-  startTimer,
   isSelectMode,
 }) => {
   return (
@@ -39,11 +37,9 @@ const WordCard: React.FC<Props & Dispatchers> = ({
             ))}
         </ul>
       )}
-      {!isSelectMode ? (
-        <button onClick={startTimer}>Start</button>
-      ) : (
+      {
         <button onClick={submit}>Submit</button>
-      )}
+      }
     </>
   );
 };
@@ -55,7 +51,6 @@ const mapStateToProps = (state: AppState, ownProps: Props) => ({
 });
 
 const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({
-  startTimer: () => dispatch(startTimer()),
 });
 
 export default connect(mapStateToProps, mapStateToDispatchers)(WordCard);

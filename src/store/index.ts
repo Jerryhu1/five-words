@@ -1,7 +1,7 @@
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
 import { cardReducer } from "./card/reducer";
 import { playerReducer } from "./player/reducers";
-import { timerReducer } from "./timer/reducer";
+import { timerReducer } from "./timer/reducers";
 import { MakeStore, Context, createWrapper } from "next-redux-wrapper";
 import { rootSaga } from "../sagas/rootSaga";
 import createSagaMiddleware, { Task } from "redux-saga";

@@ -2,54 +2,30 @@ import React from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "../..";
-import { tickTimer } from "../../store/timer/action";
+import { setTimer } from "../../store/timer/actions";
 import { toggleSelect } from "../../store/card/action";
 type Props = {
-  onTimeUp?: () => {};
+  onTimeUp?: () => void;
   currTime?: number;
   maxTime?: number;
   started?: boolean;
 };
 
 type Dispatchers = {
-  tickTimer: () => {};
   toggleSelect: () => {};
 };
 
-const resetTimer = () => {};
-
-const onTimeUp = (onTimeUp: () => {}) => {
-  // Show card to all players, including opposite team
-  // Allow selecting words to mark correct
-  // Show submit button
-};
-
-const timeDisplay = (currTime: number) => <>{currTime}</>;
-
 const Timer: React.FC<Props & Dispatchers> = ({
   currTime,
-  tickTimer,
-  maxTime,
-  started,
-  toggleSelect,
+  onTimeUp,
 }) => {
   React.useEffect(() => {
-    if (!started) {
-      return;
+    if(currTime === 0) {
+      if (onTimeUp) {
+        onTimeUp()
+      }
     }
-
-    if (currTime != null && currTime <= 0) {
-      toggleSelect();
-      return;
-    }
-    const timer = setTimeout(() => {
-      tickTimer();
-    }, 1000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [currTime, started]);
-
+  }, [onTimeUp, currTime])
   return (
     <>
       <div>
@@ -61,13 +37,10 @@ const Timer: React.FC<Props & Dispatchers> = ({
 
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
   onTimeUp: ownProps.onTimeUp,
-  currTime: state.timer.time,
-  maxTime: state.timer.maxTime,
-  started: state.timer.started,
+  currTime: state.room.timer,
 });
 
 const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({
-  tickTimer: () => dispatch(tickTimer()),
   toggleSelect: () => dispatch(toggleSelect()),
 });
 

@@ -17,4 +17,15 @@ export interface RoomState {
   teamTurn: string;
   currentCard: Card;
   language: string;
+  timer: number;
+  started: boolean;
+  state: State
+}
+
+export enum State {
+  LOBBY_STANDBY = "LOBBY_STANDBY",
+  ROUND_STARTING = "ROUND_STARTING",
+  ROUND_ONGOING = "ROUND_ONGOING",
+  ROUND_END = "ROUND_END",
+  GAME_OVER = "GAME_OVER"
 }

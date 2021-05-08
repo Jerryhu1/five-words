@@ -18,6 +18,8 @@ const initialState: RoomState = {
     correct: 0,
   },
   language: "",
+  timer: 0,
+  started: false
 };
 
 export const roomReducer = (

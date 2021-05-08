@@ -11,11 +11,13 @@ import {put, takeLatest, takeEvery} from "redux-saga/effects";
 import {SET_ROOM} from "../../store/room/types";
 import {SET_SESSION, WS_RECEIVE_MESSAGE} from "../../store/websocket/actions";
 import {SET_ACTIVE_PLAYER_ID} from "../../store/player/types";
+import {START_TIMER, SET_TIMER} from "../../store/timer/types";
 
 export function* socketWatcher() {
-  yield takeLatest(WEBSOCKET_CONNECT, connectSocketFlow);
-  yield takeLatest(WEBSOCKET_DISCONNECT, connectSocketFlow);
-  yield takeLatest(WEBSOCKET_SEND, connectSocketFlow);
+  yield takeLatest([
+    WEBSOCKET_CONNECT,
+    WEBSOCKET_DISCONNECT,
+    WEBSOCKET_SEND], connectSocketFlow);
   yield takeEvery(WS_RECEIVE_MESSAGE, connectSocketMessageFlow);
 }
 
@@ -48,6 +50,22 @@ function* connectSocketMessageFlow(action: Action) {
               newState: {
                 ...message.body,
               }
+            }
+          })
+          break;
+        case START_TIMER:
+          yield put({
+            type: START_TIMER,
+            payload: {
+              ...message.body
+            }
+          })
+          break;
+        case SET_TIMER:
+          yield put({
+            type: SET_TIMER,
+            payload: {
+              ...message.body
             }
           })
           break;
