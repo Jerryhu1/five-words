@@ -3,11 +3,9 @@ import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "../../";
 import WordRow from "./WordRow";
-import { startTimer } from "../../store/timer/actions";
 import { Card } from "../../store/card/type";
 type Props = {
   card?: Card;
-  showWords?: boolean;
   isSelectMode?: boolean;
 };
 
@@ -18,14 +16,14 @@ const submit = () => {};
 
 const WordCard: React.FC<Props & Dispatchers> = ({
   card,
-  showWords,
   isSelectMode,
 }) => {
   return (
     <>
+      <h3>Card</h3>
       {!card ? null : (
         <ul>
-          {showWords &&
+          {
             card.words.map((word, i) => (
               <li key={i}>
                 <WordRow
@@ -45,8 +43,7 @@ const WordCard: React.FC<Props & Dispatchers> = ({
 };
 
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  card: state.card.currentCard,
-  showWords: state.card.showWords,
+  card: state.room.currentCard,
   isSelectMode: state.card.isSelectMode,
 });
 

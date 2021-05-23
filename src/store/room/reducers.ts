@@ -1,7 +1,7 @@
-import {Action, ActionType, getType} from "typesafe-actions";
-import { Player, Team } from "../player/types";
+import {ActionType, getType} from "typesafe-actions";
+import {Player, Team} from "../player/types";
 import * as actions from "./actions";
-import { RoomState } from "./types";
+import {RoomState, State} from "./types";
 
 export type RoomActionTypes = ActionType<typeof actions>;
 
@@ -19,7 +19,9 @@ const initialState: RoomState = {
   },
   language: "",
   timer: 0,
-  started: false
+  started: false,
+  state: State.LOBBY_STANDBY,
+  currExplainer: ""
 };
 
 export const roomReducer = (

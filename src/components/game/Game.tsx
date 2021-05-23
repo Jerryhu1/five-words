@@ -15,11 +15,9 @@ const dispatchProps = {
 }
 
 export const Game: React.FC<Props & typeof dispatchProps> = ({}) => {
-  const [showCard, setShowCard] = React.useState(false)
   const [showRoundTimer, setShowRoundtimer] = React.useState(false)
 
   const onCountDownTimerFinish = () => {
-    setShowCard(true)
     setShowRoundtimer(true)
 
   }
@@ -32,7 +30,7 @@ export const Game: React.FC<Props & typeof dispatchProps> = ({}) => {
         // TODO: End round after timer finishes
         !showRoundTimer ? <Timer onTimeUp={onCountDownTimerFinish}/> : <Timer/>
       }
-      {showCard ?? <WordCard/>}
+      <WordCard/>
     </div>
   )
 };

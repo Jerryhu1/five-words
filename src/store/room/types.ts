@@ -20,6 +20,7 @@ export interface RoomState {
   timer: number;
   started: boolean;
   state: State
+  currExplainer: string;
 }
 
 export enum State {

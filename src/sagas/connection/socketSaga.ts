@@ -8,10 +8,9 @@ import {
 } from "@giantmachines/redux-websocket/dist";
 import {Action} from "@giantmachines/redux-websocket/dist/types";
 import {put, takeLatest, takeEvery} from "redux-saga/effects";
-import {SET_ROOM} from "../../store/room/types";
 import {SET_SESSION, WS_RECEIVE_MESSAGE} from "../../store/websocket/actions";
 import {SET_ACTIVE_PLAYER_ID} from "../../store/player/types";
-import {START_TIMER, SET_TIMER} from "../../store/timer/types";
+import {SET_ROOM} from "../../store/room/types";
 
 export function* socketWatcher() {
   yield takeLatest([
@@ -50,22 +49,6 @@ function* connectSocketMessageFlow(action: Action) {
               newState: {
                 ...message.body,
               }
-            }
-          })
-          break;
-        case START_TIMER:
-          yield put({
-            type: START_TIMER,
-            payload: {
-              ...message.body
-            }
-          })
-          break;
-        case SET_TIMER:
-          yield put({
-            type: SET_TIMER,
-            payload: {
-              ...message.body
             }
           })
           break;
