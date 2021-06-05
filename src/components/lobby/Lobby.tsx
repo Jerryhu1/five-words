@@ -5,7 +5,7 @@ import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
 import {startGame} from "../../store/room/actions";
-import {startTimer} from "../../store/timer/actions";
+import {startRound} from "../../store/timer/actions";
 
 type Props = {
   teams?: Map<string, Team>;
@@ -17,20 +17,20 @@ type Props = {
 
 const dispatchProps = {
   startGame: startGame,
-  startTimer: startTimer
+  startRound: startRound
 };
 
 const Lobby: React.FC<Props & typeof dispatchProps> = ({
   startGame,
   roomName,
-  startTimer,
+  startRound,
   showGame
 }) => {
 
   const onStartGame = (roomName: string) => {
     startGame(roomName)
-    // Initial countdown
-    startTimer(roomName, 3)
+    // TODO: Get this from room settings instead of hardcoded
+    startRound(roomName, 3, 30)
   }
   return (
     <>

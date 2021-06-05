@@ -11,6 +11,7 @@ const initialState: GameState = {
       name: "Red",
       players: [],
       points: 0,
+      currExplainer: ""
     },
     {
       cards: [],
@@ -18,6 +19,7 @@ const initialState: GameState = {
       name: "Blue",
       players: [],
       points: 0,
+      currExplainer: ""
     },
     {
       cards: [],
@@ -25,6 +27,7 @@ const initialState: GameState = {
       name: "Yellow",
       players: [],
       points: 0,
+      currExplainer: ""
     },
   ],
   players: new Map<string, Player>(),

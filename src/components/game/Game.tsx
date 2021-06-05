@@ -4,22 +4,16 @@ import Timer from "./Timer";
 import WordCard from "./WordCard";
 import {AppState} from "../../index";
 import {connect} from "react-redux";
-import {startTimer} from "../../store/timer/actions";
 
-type Props = {
-  timerStarted?: boolean
-}
+type Props = {}
 
-const dispatchProps = {
-  startTimer: startTimer
-}
+const dispatchProps = {}
 
-export const Game: React.FC<Props & typeof dispatchProps> = ({}) => {
+export const Game: React.FC<Props & typeof dispatchProps> = () => {
   const [showRoundTimer, setShowRoundtimer] = React.useState(false)
 
   const onCountDownTimerFinish = () => {
     setShowRoundtimer(true)
-
   }
 
   return (
@@ -36,7 +30,6 @@ export const Game: React.FC<Props & typeof dispatchProps> = ({}) => {
 };
 
 const mapStateToProps = (state: AppState, _: Props) => ({
-  timerStarted: state.timer.started,
   roomName: state.room.name
 })
 

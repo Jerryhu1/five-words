@@ -2,8 +2,6 @@ import React from "react";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "../..";
-import { setTimer } from "../../store/timer/actions";
-import { toggleSelect } from "../../store/card/action";
 type Props = {
   onTimeUp?: () => void;
   currTime?: number;
@@ -12,7 +10,6 @@ type Props = {
 };
 
 type Dispatchers = {
-  toggleSelect: () => {};
 };
 
 const Timer: React.FC<Props & Dispatchers> = ({
@@ -40,8 +37,6 @@ const mapStateToProps = (state: AppState, ownProps: Props) => ({
   currTime: state.room.timer,
 });
 
-const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({
-  toggleSelect: () => dispatch(toggleSelect()),
-});
+const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({});
 
 export default connect(mapStateToProps, mapStateToDispatchers)(Timer);

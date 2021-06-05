@@ -1,16 +1,11 @@
 import {createAction} from "typesafe-actions";
-import {START_TIMER, SET_TIMER} from "./types";
+import {START_ROUND} from "./types";
 
-export const startTimer = createAction(START_TIMER, (action) => {
-  return (roomName: string, maxTime: number) =>
+export const startRound = createAction(START_ROUND, (action) => {
+  return (roomName: string, countdownTime: number, roundTime: number) =>
     action({
       roomName: roomName,
-      maxTime: maxTime
+      roundTime: roundTime,
+      countdownTime: countdownTime
     })
 })
-
-export const setTimer = createAction(SET_TIMER, (action) => {
-  return (newTime: number) => action({
-    newTime: newTime
-  })
-});

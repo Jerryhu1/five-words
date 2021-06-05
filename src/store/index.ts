@@ -1,7 +1,4 @@
 import { applyMiddleware, combineReducers, createStore, Store } from "redux";
-import { cardReducer } from "./card/reducer";
-import { playerReducer } from "./player/reducers";
-import { timerReducer } from "./timer/reducers";
 import { MakeStore, Context, createWrapper } from "next-redux-wrapper";
 import { rootSaga } from "../sagas/rootSaga";
 import createSagaMiddleware, { Task } from "redux-saga";
@@ -9,13 +6,14 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import reduxWebsocket from "@giantmachines/redux-websocket";
 import { roomReducer } from "./room/reducers";
 import {sessionReducer} from "./websocket/reducers";
+import {playerReducer} from "./player/reducers";
+import {cardReducer} from "./card/reducer";
 
 export const rootReducer = combineReducers({
   game: playerReducer,
-  card: cardReducer,
-  timer: timerReducer,
   room: roomReducer,
-  session: sessionReducer
+  session: sessionReducer,
+  card: cardReducer
 });
 
 export interface SagaStore extends Store {
