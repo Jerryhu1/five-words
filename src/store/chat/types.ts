@@ -1,5 +1,6 @@
 export const ADD_MESSAGE = "ADD_MESSAGE"
 export const SET_ENABLE = "SET_ENABLE"
+export const SEND_MESSAGE = "SEND_MESSAGE"
 
 export interface ChatState {
   messages: Message[]

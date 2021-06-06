@@ -5,6 +5,8 @@ import {FETCH_ACTIVE_PLAYER} from "../../store/player/types";
 import {RoomActionTypes} from "../../store/room/reducers";
 import {ADD_PLAYER_TO_ROOM, CREATE_ROOM, GET_ROOM, SET_ROOM, START_GAME,} from "../../store/room/types";
 import {WEBSOCKET_SEND} from "@giantmachines/redux-websocket/dist";
+import {getType} from "typesafe-actions";
+import * as actions from "../../store/room/actions";
 
 export function* roomWatcher() {
   yield takeLatest(
@@ -17,14 +19,14 @@ function* roomFlow(action: RoomActionTypes) {
   // If create room -> Do sychronous http call to server to create room
   // Then synchronous http call to server to add player to that room
   switch (action.type) {
-    case GET_ROOM:
+    case getType(actions.getRoom):
       const response: AxiosResponse = yield call(
         RoomClient.getRoom,
         action.payload.roomName
       );
       yield put({ type: SET_ROOM, payload: { newState: response.data } });
       break;
-    case ADD_PLAYER_TO_ROOM:
+    case getType(actions.addPlayerToRoom):
       try {
         yield put({
           type: WEBSOCKET_SEND,
@@ -37,7 +39,7 @@ function* roomFlow(action: RoomActionTypes) {
         console.log(err);
       }
       break;
-    case START_GAME:
+    case getType(actions.startGame):
       try {
         yield put({
           type: WEBSOCKET_SEND,

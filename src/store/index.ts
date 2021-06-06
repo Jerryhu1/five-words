@@ -7,11 +7,13 @@ import reduxWebsocket from "@giantmachines/redux-websocket";
 import { roomReducer } from "./room/reducers";
 import {sessionReducer} from "./websocket/reducers";
 import {cardReducer} from "./card/reducer";
+import {chatReducer} from "./chat/reducer";
 
 export const rootReducer = combineReducers({
   room: roomReducer,
   session: sessionReducer,
-  card: cardReducer
+  card: cardReducer,
+  chat: chatReducer
 });
 
 export interface SagaStore extends Store {

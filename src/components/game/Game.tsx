@@ -4,6 +4,7 @@ import Timer from "./Timer";
 import WordCard from "./WordCard";
 import {AppState} from "../../index";
 import {connect} from "react-redux";
+import ChatBox from "./ChatBox";
 
 type Props = {}
 
@@ -25,6 +26,7 @@ export const Game: React.FC<Props & typeof dispatchProps> = () => {
         !showRoundTimer ? <Timer onTimeUp={onCountDownTimerFinish}/> : <Timer/>
       }
       <WordCard/>
+      <ChatBox/>
     </div>
   )
 };
