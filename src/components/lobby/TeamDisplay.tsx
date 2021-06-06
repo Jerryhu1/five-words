@@ -5,7 +5,7 @@ import {Player, Team} from "../../store/player/types";
 
 type Props = {
   teams?: Map<string, Team>;
-  activePlayer?: Player;
+  sessionID?: string;
   players?: Map<string, Player>;
   roomName?: string;
 };
@@ -16,7 +16,7 @@ const dispatchProps = {
 
 const TeamDisplay: React.FC<Props & typeof dispatchProps> =
   ({
-     activePlayer,
+    sessionID,
      teams,
      roomName,
      addTeamPlayer,
@@ -35,28 +35,28 @@ const TeamDisplay: React.FC<Props & typeof dispatchProps> =
           </li>
         </div>
         <h2>Teams</h2>
-        {!teams || !activePlayer
+        {!teams || !sessionID
           ? null
           : Array.from(teams).map(([key, team]) => (
             <div key={team.name}>
               <h3>{team.name}</h3>
               <ul>
                 {team.players.map((player) => (
-                  <li style={player === activePlayer.id ? {fontWeight: "bold"} : {}}
+                  <li style={player === sessionID ? {fontWeight: "bold"} : {}}
                       key={player}>
                     {players ? players.get(player)?.name : ""}
                   </li>
                 ))}
               </ul>
-              {team.players.filter((el) => el === activePlayer.id).length > 0 ? null : (
+              {team.players.filter((el) => el === sessionID).length > 0 ? null : (
                 <button
                   key={team.id}
                   onClick={() =>
-                    !activePlayer
+                    !sessionID
                       ? null
                       : addTeamPlayer(
                       roomName ?? "",
-                      activePlayer.id,
+                      sessionID,
                       team.name,
                       )
                   }
@@ -72,7 +72,7 @@ const TeamDisplay: React.FC<Props & typeof dispatchProps> =
 
 const mapStateToProps = (state: AppState, _: Props) => ({
   teams: state.room.teams,
-  activePlayer: state.game.activePlayer,
+  sessionID: state.session.sessionID,
   players: state.room.players,
   roomName: state.room.name,
 });

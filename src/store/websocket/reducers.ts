@@ -4,10 +4,12 @@ import * as actions from "../websocket/actions";
 export type SessionActionTypes = ActionType<typeof actions>;
 type SessionState = {
   sessionID: string
+  activePlayer: string
 }
 
 const initialState: SessionState = {
-  sessionID: ""
+  sessionID: "",
+  activePlayer: ""
 };
 
 export const sessionReducer = (
@@ -19,6 +21,11 @@ export const sessionReducer = (
       return {
         ...state,
         sessionID: action.payload.sessionID
+      };
+    case getType(actions.setActivePlayer):
+      return {
+        ...state,
+        activePlayer: action.payload.activePlayer
       };
     default:
       return state;

@@ -4,7 +4,7 @@ import {connect as wsConnect} from "@giantmachines/redux-websocket";
 
 import {addPlayerToRoom} from "../../store/room/actions";
 import {AppState} from "../..";
-import {setActivePlayer} from "../../store/player/actions";
+import {setActivePlayer} from "../../store/websocket/actions";
 import PlayerForm from "./playerForm";
 import RoomForm from "./roomForm";
 import RoomClient from "../../client/room";
@@ -34,7 +34,7 @@ const Create: React.FC<typeof dispatchProps & Props> = ({
   const onSubmitPlayerForm = (name: string) => {
     // TODO: Determine host dynamically, or place somewhere else
     wsConnect("ws://localhost:8080");
-    setActivePlayer(name, "")
+    setActivePlayer(name)
     setShowPlayerForm(false)
   }
 
@@ -66,7 +66,7 @@ const Create: React.FC<typeof dispatchProps & Props> = ({
 }
 
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  playerName: state.game.activePlayer.name,
+  playerName: state.session.activePlayer,
   sessionID: state.session.sessionID
 });
 

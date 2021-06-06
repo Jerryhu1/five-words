@@ -18,7 +18,3 @@ export const showWords = (): CardActionTypes => ({
 export const toggleSelect = (): CardActionTypes => ({
   type: TOGGLE_SELECT,
 });
-
-export const loadCards = (): CardActionTypes => ({
-  type: LOAD_CARD,
-});

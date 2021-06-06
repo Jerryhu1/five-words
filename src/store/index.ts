@@ -6,11 +6,9 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import reduxWebsocket from "@giantmachines/redux-websocket";
 import { roomReducer } from "./room/reducers";
 import {sessionReducer} from "./websocket/reducers";
-import {playerReducer} from "./player/reducers";
 import {cardReducer} from "./card/reducer";
 
 export const rootReducer = combineReducers({
-  game: playerReducer,
   room: roomReducer,
   session: sessionReducer,
   card: cardReducer

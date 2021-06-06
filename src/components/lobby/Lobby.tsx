@@ -9,7 +9,6 @@ import {startRound} from "../../store/timer/actions";
 
 type Props = {
   teams?: Map<string, Team>;
-  activePlayer?: Player;
   players?: Map<string, Player>;
   roomName?: string;
   showGame?: boolean;
@@ -47,7 +46,6 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
 
 const mapStateToProps = (state: AppState, ownProps: Props) => ({
   teams: state.room.teams,
-  activePlayer: state.game.activePlayer,
   players: state.room.players,
   roomName: state.room.name,
   showGame: state.room.started

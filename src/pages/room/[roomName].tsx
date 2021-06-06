@@ -4,13 +4,12 @@ import Lobby from "../../components/lobby/Lobby";
 import {addPlayerToRoom, getRoom} from "../../store/room/actions";
 import {connect} from "react-redux";
 import {connect as wsConnect} from "@giantmachines/redux-websocket";
-import {Player} from "../../store/player/types";
 import {AppState} from "../../index";
 import PlayerForm from "./playerForm";
-import {setActivePlayer} from "../../store/player/actions";
+import {setActivePlayer} from "../../store/websocket/actions";
 
 type Props = {
-  activePlayer: Player
+  activePlayer: string
   sessionID: string
 }
 
@@ -37,24 +36,23 @@ const Room: React.FC<Props & typeof dispatchProps> = ({
         getRoom(roomName);
       }
     }
-  }, [])
+  }, [roomName, getRoom])
 
   const [showPlayerForm, setShowPlayerForm] = React.useState(false)
   React.useEffect(() => {
     // Redirect user to player register page first
-
-    if (activePlayer.name === "") {
+    if (activePlayer === "") {
       setShowPlayerForm(true)
     }
     if (sessionID === "") {
+      // TODO: Determine host dynamically, or place somewhere else
       wsConnect("ws://localhost:8080");
     }
   }, [getRoom, wsConnect, activePlayer, sessionID])
 
 
   const onPlayerFormSubmit = (name: string) => {
-    // TODO: Determine host dynamically, or place somewhere else
-    setActivePlayer(name, "")
+    setActivePlayer(name)
     addPlayerToRoom(roomName as string, sessionID, name)
     setShowPlayerForm(false)
   }
@@ -73,8 +71,8 @@ const Room: React.FC<Props & typeof dispatchProps> = ({
   );
 };
 
-const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  activePlayer: state.game.activePlayer,
+const mapStateToProps = (state: AppState, _: Props) => ({
+  activePlayer: state.session.activePlayer,
   sessionID: state.session.sessionID
 })
 
