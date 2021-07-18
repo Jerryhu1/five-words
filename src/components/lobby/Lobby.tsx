@@ -1,4 +1,4 @@
-import { connect } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../..";
 import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
@@ -7,27 +7,19 @@ import { startGame, startRound } from "../../store/room/actions";
 import { Player, Team } from "../../types/player";
 
 type Props = {
-  teams?: Map<string, Team>;
-  players?: Map<string, Player>;
   roomName?: string;
   showGame?: boolean;
 };
 
-const dispatchProps = {
-  startGame: startGame,
-  startRound: startRound,
-};
-
-const Lobby: React.FC<Props & typeof dispatchProps> = ({
-  startGame,
-  roomName,
-  startRound,
-  showGame,
-}) => {
+const Lobby: React.FC<Props> = () => {
+  const roomName = useSelector((state: AppState) => state.room.name);
+  const showGame = useSelector((state: AppState) => state.room.started);
+  const dispatch = useDispatch();
   const onStartGame = (roomName: string) => {
-    startGame(roomName);
-    startRound(roomName, 3, 30);
+    dispatch(startGame(roomName));
+    dispatch(startRound(roomName, 3, 30));
   };
+
   return (
     <>
       {roomName && (
@@ -43,11 +35,4 @@ const Lobby: React.FC<Props & typeof dispatchProps> = ({
   );
 };
 
-const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  teams: state.room.teams,
-  players: state.room.players,
-  roomName: state.room.name,
-  showGame: state.room.started,
-});
-
-export default connect(mapStateToProps, dispatchProps)(Lobby);
+export default Lobby;

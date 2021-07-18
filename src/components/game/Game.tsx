@@ -2,37 +2,41 @@ import React from "react";
 import InfoHeader from "./InfoHeader";
 import Timer from "./Timer";
 import WordCard from "./WordCard";
-import {AppState} from "../../index";
-import {connect} from "react-redux";
+import { AppState } from "../../index";
+import { connect } from "react-redux";
 import ChatBox from "./ChatBox";
 
-type Props = {}
+type Props = {};
 
-const dispatchProps = {}
+const dispatchProps = {};
 
 export const Game: React.FC<Props & typeof dispatchProps> = () => {
-  const [showRoundTimer, setShowRoundtimer] = React.useState(false)
+  const [showRoundTimer, setShowRoundtimer] = React.useState(false);
 
   const onCountDownTimerFinish = () => {
-    setShowRoundtimer(true)
-  }
+    setShowRoundtimer(true);
+  };
 
   return (
     <div>
       <h1>Game</h1>
-      <InfoHeader/>
+      <InfoHeader />
       {
         // TODO: End round after timer finishes
-        !showRoundTimer ? <Timer onTimeUp={onCountDownTimerFinish}/> : <Timer/>
+        !showRoundTimer ? (
+          <Timer onTimeUp={onCountDownTimerFinish} />
+        ) : (
+          <Timer />
+        )
       }
-      <WordCard/>
-      <ChatBox/>
+      <WordCard />
+      <ChatBox />
     </div>
-  )
+  );
 };
 
 const mapStateToProps = (state: AppState, _: Props) => ({
-  roomName: state.room.name
-})
+  roomName: state.room.name,
+});
 
-export default connect(mapStateToProps, dispatchProps)(Game)
+export default connect(mapStateToProps, dispatchProps)(Game);

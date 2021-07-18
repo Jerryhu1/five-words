@@ -21,7 +21,6 @@ const initialState: RoomState = {
   timer: 0,
   started: false,
   state: State.LOBBY_STANDBY,
-  currExplainer: ""
 };
 
 export const roomReducer = (
