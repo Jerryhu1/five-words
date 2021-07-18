@@ -1,53 +1,32 @@
 import React from "react";
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { AppState } from "../../";
-import WordRow from "./WordRow";
-import { Card } from "../../store/card/type";
-type Props = {
-  card?: Card;
-  isSelectMode?: boolean;
-};
-
-type Dispatchers = {
-};
+type Props = {};
 
 const submit = () => {};
 
-const WordCard: React.FC<Props & Dispatchers> = ({
-  card,
-  isSelectMode,
-}) => {
+const WordCard: React.FC<Props> = () => {
+  const card = useSelector((state: AppState) => state.room.currentCard);
   return (
     <>
       <h3>Card</h3>
       {card && (
         <ul>
-          {
-            card.words && card.words.map((word, i) => (
+          {card.words &&
+            card.words.map((word, i) => (
               <li key={i}>
-                <WordRow
-                  index={i}
-                  word={word}
-                  canCheck={!isSelectMode ? false : isSelectMode}
-                />
+                <span
+                  style={{ textDecoration: word.correct ? "line-through" : "" }}
+                >
+                  {word.text}
+                </span>
               </li>
             ))}
         </ul>
       )}
-      {
-        <button onClick={submit}>Submit</button>
-      }
+      {<button onClick={submit}>Submit</button>}
     </>
   );
 };
 
-const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  card: state.room.currentCard,
-  isSelectMode: state.card.isSelectMode,
-});
-
-const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({
-});
-
-export default connect(mapStateToProps, mapStateToDispatchers)(WordCard);
+export default WordCard;

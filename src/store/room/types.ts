@@ -1,5 +1,5 @@
-import { Card } from "../card/type";
-import { Player, Team } from "../player/types";
+import {Player, Team} from "../../types/player";
+import {Card} from "../../types/card";
 
 export const CREATE_ROOM = "CREATE_ROOM";
 export const ADD_PLAYER_TO_ROOM = "ADD_PLAYER_TO_ROOM";
@@ -30,3 +30,5 @@ export enum State {
   ROUND_END = "ROUND_END",
   GAME_OVER = "GAME_OVER"
 }
+
+export const START_ROUND = "START_ROUND"

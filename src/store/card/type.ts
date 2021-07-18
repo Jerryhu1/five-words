@@ -1,19 +1,9 @@
+import {Card} from "../../types/card";
+
 export interface CardState {
   currentCard: Card;
   showWords: boolean;
   isSelectMode: boolean;
-}
-
-export interface Card {
-  id: string;
-  words: Word[];
-  correct: number;
-}
-
-export interface Word {
-  id: string;
-  text: string;
-  correct: boolean;
 }
 
 export const SET_CARD = "SET_CARD";

@@ -1,7 +1,7 @@
 import {ActionType, getType} from "typesafe-actions";
-import {Player, Team} from "../player/types";
 import * as actions from "./actions";
 import {RoomState, State} from "./types";
+import {Player, Team} from "../../types/player";
 
 export type RoomActionTypes = ActionType<typeof actions>;
 

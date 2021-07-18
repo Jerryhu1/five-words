@@ -1,7 +1,7 @@
 import {connect} from "react-redux";
 import {AppState} from "../..";
 import {addTeamPlayer} from "../../store/player/actions";
-import {Player, Team} from "../../store/player/types";
+import {Player, Team} from "../../types/player";
 
 type Props = {
   teams?: Map<string, Team>;
