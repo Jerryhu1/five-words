@@ -9,9 +9,11 @@ type Props = {};
 const WordCard: React.FC<Props> = () => {
   const card = useSelector((state: AppState) => state.room.currentCard);
   const roomName = useSelector((state: AppState) => state.room.name)
+  const roundDone = useSelector((state: AppState) => state.room.timer === 0)
+  const isExplainer = useSelector((state: AppState) =>
+    state.session.sessionID === state.room.currExplainer)
   const dispatch = useDispatch()
   const submit = () => {
-    console.log("test")
     // TODO: These settings should not need to be passed for each round, settings have to be persisted
     dispatch(startRound(roomName, 3, 30))
   };
@@ -33,7 +35,7 @@ const WordCard: React.FC<Props> = () => {
           ))}
         </ul>
       )}
-      {<button onClick={_ => submit()}>Submit</button>}
+      {(roundDone && isExplainer) && <button onClick={_ => submit()}>Submit</button>}
     </>
   );
 };
