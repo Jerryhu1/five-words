@@ -5,8 +5,10 @@ import {sendMessage} from "../../store/chat/actions";
 import {connect} from "react-redux";
 
 type Props = {
+  roomName?: string
   messages?: Message[]
-  sessionID?: string
+  sessionID?: string,
+  playerName?: string
 }
 
 const dispatchProps = {
@@ -14,15 +16,17 @@ const dispatchProps = {
 }
 
 const ChatBox: React.FC<Props & typeof dispatchProps> = ({
+  roomName,
    messages,
    sendMessage,
-   sessionID
+   sessionID,
+  playerName
   }) => {
   const [inputText, setInputText] = React.useState("")
 
   const onSubmit = (e: MouseEvent | FormEvent) => {
     e.preventDefault()
-    sendMessage(inputText, sessionID ?? "")
+    sendMessage(roomName ?? "", inputText, sessionID ?? "", playerName ?? "")
     setInputText("")
   }
 
@@ -58,10 +62,11 @@ const ChatBox: React.FC<Props & typeof dispatchProps> = ({
 }
 
 const mapStateToProps = (state: AppState, _: Props) => {
-  console.log(state.session.sessionID)
   return ({
+  roomName: state.room.name,
   messages: state.chat.messages,
-  session: state.session.sessionID
+  sessionID: state.session.sessionID,
+  playerName: state.session.activePlayer
   })
 }
 

@@ -10,6 +10,7 @@ import {Action} from "@giantmachines/redux-websocket/dist/types";
 import {put, takeLatest, takeEvery} from "redux-saga/effects";
 import {SET_SESSION, WS_RECEIVE_MESSAGE} from "../../store/websocket/actions";
 import {SET_ROOM} from "../../store/room/types";
+import {ADD_MESSAGE} from "../../store/chat/types";
 import {SET_ACTIVE_PLAYER_ID} from "../../store/player/types";
 
 export function* socketWatcher() {
@@ -52,6 +53,10 @@ function* connectSocketMessageFlow(action: Action) {
             }
           })
           break;
+        case ADD_MESSAGE:
+          yield put({
+            type: ADD_MESSAGE, payload: message.body
+          })
       }
       break;
   }

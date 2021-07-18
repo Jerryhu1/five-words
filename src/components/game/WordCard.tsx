@@ -21,10 +21,10 @@ const WordCard: React.FC<Props & Dispatchers> = ({
   return (
     <>
       <h3>Card</h3>
-      {!card ? null : (
+      {card && (
         <ul>
           {
-            card.words.map((word, i) => (
+            card.words && card.words.map((word, i) => (
               <li key={i}>
                 <WordRow
                   index={i}

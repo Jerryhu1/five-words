@@ -30,7 +30,7 @@ const WordRow: React.FC<Props & Dispatchers> = ({
   return (
     <>
       <span
-        style={{ textDecoration: checked ? "line-through" : "" }}
+        style={{ textDecoration: word.correct ? "line-through" : "" }}
         onClick={() => (canCheck ? onWordClick(index, toggleWordCheck) : {})}
       >
         {word.text}

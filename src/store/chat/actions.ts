@@ -21,8 +21,10 @@ export const setEnable = createAction(SET_ENABLE, (action) => {
 
 // Sagas
 export const sendMessage = createAction(SEND_MESSAGE, (action) => {
-  return (text: string, playerID: string) => action({
+  return (roomName: string, text: string, playerID: string, playerName: string) => action({
+    roomName: roomName,
     text: text,
     playerID: playerID,
+    playerName: playerName
   })
 })
