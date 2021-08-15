@@ -4,7 +4,6 @@ import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
 import { startGame, startRound } from "../../store/room/actions";
-import { Player, Team } from "../../types/player";
 
 type Props = {
   roomName?: string;
@@ -21,17 +20,23 @@ const Lobby: React.FC<Props> = () => {
   };
 
   return (
-    <>
+    <div className="flex flex-col px-32 h-full">
+      <h1>{roomName}</h1>
       {roomName && (
-        <div>
-          {!showGame && (
-            <button onClick={() => onStartGame(roomName)}>Start game</button>
-          )}
+        <div className="flex flex-row">
           <TeamDisplay />
           {showGame && <Game />}
         </div>
       )}
-    </>
+      {!showGame && (
+        <button
+          className="border border-solid border-green-400 rounded p-3 bg-green-400 text-white"
+          onClick={() => onStartGame(roomName)}
+        >
+          Start game
+        </button>
+      )}
+    </div>
   );
 };
 

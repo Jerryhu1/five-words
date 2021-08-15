@@ -9,7 +9,7 @@ export interface Team {
   id: string;
   name: string;
   players: string[];
-  points: number;
+  score: number;
   cards: number[];
   currExplainer: string;
 }

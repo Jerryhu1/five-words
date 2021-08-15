@@ -2,6 +2,7 @@ import React from "react";
 import  {END} from "redux-saga"
 import App, {AppContext, AppInitialProps} from "next/app";
 import {SagaStore, wrapper} from "../store";
+import './styles/globals.css'
 
 class Application extends App<AppInitialProps> {
   public static getInitialProps = async ({Component, ctx}: AppContext) => {

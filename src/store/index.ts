@@ -23,11 +23,15 @@ export interface SagaStore extends Store {
 export type RootState = ReturnType<typeof rootReducer>;
 const reduxWebsocketMiddleware = reduxWebsocket();
 
+const composeEnhancers = composeWithDevTools({
+  serialize: true,
+});
+
 const makeStore: MakeStore<RootState> = (context: Context) => {
   const sagaMiddleware = createSagaMiddleware();
   const store = createStore(
     rootReducer /* preloadedState, */,
-    composeWithDevTools(
+    composeEnhancers(
       applyMiddleware(sagaMiddleware, reduxWebsocketMiddleware)
     )
   );

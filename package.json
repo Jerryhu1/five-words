@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@craco/craco": "^6.2.0",
     "@giantmachines/redux-websocket": "^1.4.0",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
@@ -53,6 +54,10 @@
   },
   "devDependencies": {
     "@types/react-redux": "^7.1.14",
-    "redux-devtools-extension": "^2.13.8"
+    "autoprefixer": "^9.8.6",
+    "postcss": "^7.0.36",
+    "prettier": "^2.3.2",
+    "redux-devtools-extension": "^2.13.8",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.7"
   }
 }

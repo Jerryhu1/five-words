@@ -35,10 +35,10 @@ const InfoHeader: React.FC<Props> = () => {
   );
 
   return (
-    <>
+    <div className="flex flex-col">
       <h1>{!currTeam ? null : currTeam.name} is up!</h1>
       <h3>{!currExplainer ? null : currExplainer} will explain</h3>
-    </>
+    </div>
   );
 };
 
