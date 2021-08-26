@@ -1,7 +1,7 @@
 import React from "react";
-import { Dispatch } from "redux";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { AppState } from "../..";
+
 type Props = {
   onTimeUp?: () => void;
   currTime?: number;
@@ -9,34 +9,20 @@ type Props = {
   started?: boolean;
 };
 
-type Dispatchers = {
-};
-
-const Timer: React.FC<Props & Dispatchers> = ({
-  currTime,
-  onTimeUp,
-}) => {
+const Timer: React.FC<Props> = ({ onTimeUp }) => {
+  const currTime = useSelector((state: AppState) => state.room.timer);
   React.useEffect(() => {
-    if(currTime === 0) {
+    if (currTime === 0) {
       if (onTimeUp) {
-        onTimeUp()
+        onTimeUp();
       }
     }
-  }, [onTimeUp, currTime])
+  }, [onTimeUp, currTime]);
   return (
-    <>
-      <div>
-        <span>{currTime}</span>
-      </div>
-    </>
+    <div>
+      <h1 className=" text-4xl">{currTime}</h1>
+    </div>
   );
 };
 
-const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  onTimeUp: ownProps.onTimeUp,
-  currTime: state.room.timer,
-});
-
-const mapStateToDispatchers = (dispatch: Dispatch): Dispatchers => ({});
-
-export default connect(mapStateToProps, mapStateToDispatchers)(Timer);
+export default Timer;
