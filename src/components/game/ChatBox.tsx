@@ -32,7 +32,6 @@ const ChatBox: React.FC<Props & typeof dispatchProps> = ({
 
   const chatBottom = React.useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
-    console.log("scrolldwn");
     chatBottom.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -41,9 +40,9 @@ const ChatBox: React.FC<Props & typeof dispatchProps> = ({
   }, [messages]);
 
   return (
-    <div className="rounded border border-gray-200 flex flex-col h-full bg-gray-100">
+    <div className="rounded-xl flex flex-col h-full w-full bg-purple-2">
       <div className="p-2 border-b-2">
-        <h2>Chatbox</h2>
+        <h2 className="font-bold">Chatbox</h2>
       </div>
       <div id="chatbox-container" className="flex h-full flex-col">
         <div
@@ -70,11 +69,11 @@ const ChatBox: React.FC<Props & typeof dispatchProps> = ({
             className="flex w-full justify-items-stretch gap-1 p-2"
           >
             <input
-              className="rounded border-gray-200"
+              className="rounded border-gray-200 text-black"
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-            ></input>
+            />
             <button
               type="button"
               onClick={onSubmit}

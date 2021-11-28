@@ -1,14 +1,13 @@
 import React from "react";
-import {connect} from "react-redux";
 import {connect as wsConnect} from "@giantmachines/redux-websocket";
 
 import {addPlayerToRoom} from "../../store/room/actions";
-import {AppState} from "../..";
 import {setActivePlayer} from "../../store/websocket/actions";
 import PlayerForm from "./playerForm";
 import RoomForm from "./roomForm";
 import RoomClient from "../../client/room";
 import {router} from "next/client";
+import {useAppSelector} from "../../store/hooks";
 
 const dispatchProps = {
   setActivePlayer: setActivePlayer,
@@ -24,13 +23,11 @@ type Props = {
 const Create: React.FC<typeof dispatchProps & Props> = ({
   setActivePlayer,
   addPlayerToRoom,
-  playerName,
-  sessionID,
   wsConnect
 }) => {
 
   const [showPlayerForm, setShowPlayerForm] = React.useState(true);
-
+  const { activePlayer, sessionID } = useAppSelector((store) => store.session)
   const onSubmitPlayerForm = (name: string) => {
     // TODO: Determine host dynamically, or place somewhere else
     wsConnect("ws://localhost:8080");
@@ -42,7 +39,7 @@ const Create: React.FC<typeof dispatchProps & Props> = ({
     try {
       // Register room in server, and update active room to response
       RoomClient.createRoom(scoreGoal, language).then(res => {
-        addPlayerToRoom(res.data.name, sessionID, playerName)
+        addPlayerToRoom(res.data.name, sessionID, activePlayer)
         router.push("/room/" + res.data.name)
       }, err => {console.log(err)})
     } catch (err) {
@@ -55,7 +52,7 @@ const Create: React.FC<typeof dispatchProps & Props> = ({
       {
         showPlayerForm ? <PlayerForm onSubmit={onSubmitPlayerForm} /> : (
           <div>
-            Player: {playerName}
+            Player: {activePlayer}
             <RoomForm onSubmit={onSubmitRoomForm} />
           </div>
           )
@@ -65,9 +62,5 @@ const Create: React.FC<typeof dispatchProps & Props> = ({
   );
 }
 
-const mapStateToProps = (state: AppState, ownProps: Props) => ({
-  playerName: state.session.activePlayer,
-  sessionID: state.session.sessionID
-});
 
-export default connect(mapStateToProps, dispatchProps)(Create);
+export default Create;

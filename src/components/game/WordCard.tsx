@@ -19,14 +19,14 @@ const WordCard: React.FC<Props> = () => {
   };
 
   return (
-    <div className="flex flex-col bg-yellow-200 rounded-md shadow-md w-3/4 p-4">
+    <div className="flex flex-col bg-blue rounded-md shadow-md w-3/4 p-8 text-center">
       {card && (
-        <div className="flex flex-col justify-between h-full">
+        <div className="flex flex-col justify-between h-full gap-4">
           {card.words &&
             card.words.map((word, i) => (
               <div key={i}>
                 <span
-                  className="f font-medium text-lg"
+                  className="f font-medium text-2xl uppercase"
                   style={{ textDecoration: word.correct ? "line-through" : "" }}
                 >
                   {word.text}

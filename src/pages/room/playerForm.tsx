@@ -1,5 +1,3 @@
-import {addPlayer} from "../../store/player/actions";
-import {wsConnect} from "../../store/websocket/actions";
 import React from "react";
 import {connect} from "react-redux";
 import {AppState} from "../../index";
@@ -18,6 +16,7 @@ const PlayerForm: React.FC<Props> = ({onSubmit}) => {
         onChange={(e) => setPlayer(e.target.value)}
         value={player}
         type="text"
+        className="text-black"
       />
       <button
         onClick={() => onSubmit(player)}>

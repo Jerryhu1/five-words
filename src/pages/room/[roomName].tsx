@@ -1,35 +1,19 @@
 import React from "react";
-import { useRouter } from "next/dist/client/router";
+import {useRouter} from "next/dist/client/router";
 import Lobby from "../../components/lobby/Lobby";
-import { addPlayerToRoom, getRoom } from "../../store/room/actions";
-import { connect } from "react-redux";
-import { connect as wsConnect } from "@giantmachines/redux-websocket";
-import { AppState } from "../../index";
+import {addPlayerToRoom, getRoom} from "../../store/room/actions";
+import {useSelector} from "react-redux";
+import {connect as wsConnect} from "@giantmachines/redux-websocket";
+import {AppState} from "../../index";
 import PlayerForm from "./playerForm";
-import { setActivePlayer } from "../../store/websocket/actions";
+import {setActivePlayer} from "../../store/websocket/actions";
+import Game from "../../components/game/Game";
+import SocketProvider from "./socketProvider";
+import {useAppSelector} from "../../store/hooks";
 
-type Props = {
-  activePlayer: string;
-  sessionID: string;
-};
-
-const dispatchProps = {
-  getRoom: getRoom,
-  wsConnect: wsConnect,
-  setActivePlayer: setActivePlayer,
-  addPlayerToRoom: addPlayerToRoom,
-};
-
-const Room: React.FC<Props & typeof dispatchProps> = ({
-  getRoom,
-  wsConnect,
-  activePlayer,
-  sessionID,
-  addPlayerToRoom,
-  setActivePlayer,
-}) => {
+const Room = () => {
   const router = useRouter();
-  const { roomName } = router.query;
+  const {roomName} = router.query;
   React.useEffect(() => {
     if (roomName) {
       if (typeof roomName === "string") {
@@ -39,6 +23,9 @@ const Room: React.FC<Props & typeof dispatchProps> = ({
   }, [roomName, getRoom]);
 
   const [showPlayerForm, setShowPlayerForm] = React.useState(false);
+  const showGame = useSelector((state: AppState) => state.room.started);
+  const { activePlayer, sessionID } = useAppSelector(state => state.session)
+
   React.useEffect(() => {
     // Redirect user to player register page first
     if (activePlayer === "") {
@@ -57,21 +44,18 @@ const Room: React.FC<Props & typeof dispatchProps> = ({
   };
 
   return (
-    <div className="h-screen bg-gray-200">
-      {showPlayerForm ? (
-        <PlayerForm onSubmit={onPlayerFormSubmit} />
-      ) : (
-        <>
-          <Lobby />
-        </>
-      )}
-    </div>
+    <SocketProvider>
+      <div className="h-screen">
+        {showPlayerForm ? (
+          <PlayerForm onSubmit={onPlayerFormSubmit}/>
+        ) : (
+          <>
+            {showGame ? <Game/> : <Lobby/>}
+          </>
+        )}
+      </div>
+    </SocketProvider>
   );
 };
 
-const mapStateToProps = (state: AppState, _: Props) => ({
-  activePlayer: state.session.activePlayer,
-  sessionID: state.session.sessionID,
-});
-
-export default connect(mapStateToProps, dispatchProps)(Room);
+export default Room;

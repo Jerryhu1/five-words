@@ -20,7 +20,7 @@ const Timer: React.FC<Props> = ({ onTimeUp }) => {
   }, [onTimeUp, currTime]);
   return (
     <div>
-      <h1 className=" text-4xl">{currTime}</h1>
+      <h1 className="text-6xl font-bold">{currTime}</h1>
     </div>
   );
 };
