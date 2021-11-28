@@ -1,9 +1,9 @@
-import {useDispatch, useSelector} from "react-redux";
-import {AppState} from "../..";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../..";
 import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
-import {startGame, startRound} from "../../store/room/actions";
+import { startGame, startRound } from "../../store/room/actions";
 
 type Props = {
   roomName?: string;
@@ -18,8 +18,8 @@ const Lobby: React.FC<Props> = () => {
     dispatch(startGame(roomName));
     dispatch(startRound(roomName, 3, 30));
   };
-  const teams = useSelector((state: AppState) => state.room.teams)
-  const [canStart, setCanStart] = React.useState(true)
+  const teams = useSelector((state: AppState) => state.room.teams);
+  const [canStart, setCanStart] = React.useState(true);
 
   // Uncomment when only allow to start with 2 players per team
   // React.useEffect(() => {
@@ -39,8 +39,8 @@ const Lobby: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex flex-row">
-        <TeamDisplay/>
-        {showGame && <Game/>}
+        <TeamDisplay />
+        {showGame && <Game />}
       </div>
       <div className="flex justify-center">
         {!showGame && (

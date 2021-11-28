@@ -37,7 +37,13 @@ const InfoHeader: React.FC<Props> = () => {
   return (
     <div className="flex flex-col">
       <h1>Team {!currTeam ? null : currTeam.name}</h1>
-      <h3 className="text-4xl font-bold">It's <span className="uppercase">{!currExplainer ? null : currExplainer}</span>'s turn!</h3>
+      <h3 className="text-4xl font-bold">
+        It's{" "}
+        <span className="uppercase">
+          {!currExplainer ? null : currExplainer}
+        </span>
+        's turn!
+      </h3>
     </div>
   );
 };

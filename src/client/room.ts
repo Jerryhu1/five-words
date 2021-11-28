@@ -13,10 +13,7 @@ export class RoomClient {
     return this.http.get("/room/" + name);
   };
 
-  createRoom = (
-    scoreGoal: number,
-    lang: string
-  ) => {
+  createRoom = (scoreGoal: number, lang: string) => {
     return this.http.post(`/room/create`, {
       scoreGoal: scoreGoal,
       language: lang,

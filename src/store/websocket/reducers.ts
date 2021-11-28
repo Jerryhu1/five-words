@@ -1,26 +1,26 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type SessionState = {
-  sessionID: string
-  activePlayer: string
-}
+  sessionID: string;
+  activePlayer: string;
+};
 
 const initialState: SessionState = {
   sessionID: "",
-  activePlayer: ""
+  activePlayer: "",
 };
 
 export const sessionSlice = createSlice({
   name: "session",
   initialState,
   reducers: {
-    setSession: (state, action: PayloadAction<{sessionID: string}>) => {
-      state.sessionID = action.payload.sessionID
+    setSession: (state, action: PayloadAction<{ sessionID: string }>) => {
+      state.sessionID = action.payload.sessionID;
     },
-    setActivePlayer: (state, action: PayloadAction<{playerID: string}>) => {
-      state.activePlayer = action.payload.playerID
-    }
-  }
-})
+    setActivePlayer: (state, action: PayloadAction<{ playerID: string }>) => {
+      state.activePlayer = action.payload.playerID;
+    },
+  },
+});
 
-export default sessionSlice.reducer
+export default sessionSlice.reducer;

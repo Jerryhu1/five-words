@@ -1,5 +1,5 @@
-import {Player, Team} from "../../types/player";
-import {Card} from "../../types/card";
+import { Player, Team } from "../../types/player";
+import { Card } from "../../types/card";
 
 export const CREATE_ROOM = "CREATE_ROOM";
 export const ADD_PLAYER_TO_ROOM = "ADD_PLAYER_TO_ROOM";
@@ -19,8 +19,8 @@ export interface RoomState {
   language: string;
   timer: number;
   started: boolean;
-  state: State
-  currExplainer: string
+  state: State;
+  currExplainer: string;
 }
 
 export enum State {
@@ -28,7 +28,7 @@ export enum State {
   ROUND_STARTING = "ROUND_STARTING",
   ROUND_ONGOING = "ROUND_ONGOING",
   ROUND_END = "ROUND_END",
-  GAME_OVER = "GAME_OVER"
+  GAME_OVER = "GAME_OVER",
 }
 
-export const START_ROUND = "START_ROUND"
+export const START_ROUND = "START_ROUND";

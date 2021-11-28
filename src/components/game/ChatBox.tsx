@@ -72,7 +72,7 @@ const ChatBox: React.FC<Props & typeof dispatchProps> = ({
               className="rounded border-gray-200 text-black"
               type="text"
               value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
+              onChange={e => setInputText(e.target.value)}
             />
             <button
               type="button"

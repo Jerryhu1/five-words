@@ -1,33 +1,30 @@
 import React from "react";
-import {connect} from "react-redux";
-import {AppState} from "../../index";
+import { connect } from "react-redux";
+import { AppState } from "../../index";
 
 type Props = {
-  onSubmit: (name: string) => void
-}
+  onSubmit: (name: string) => void;
+};
 
-const PlayerForm: React.FC<Props> = ({onSubmit}) => {
+const PlayerForm: React.FC<Props> = ({ onSubmit }) => {
   const [player, setPlayer] = React.useState("");
   return (
     <div>
       Player:
       <input
         name="name"
-        onChange={(e) => setPlayer(e.target.value)}
+        onChange={e => setPlayer(e.target.value)}
         value={player}
         type="text"
         className="text-black"
       />
-      <button
-        onClick={() => onSubmit(player)}>
-        Create
-      </button>
+      <button onClick={() => onSubmit(player)}>Create</button>
     </div>
-  )
-}
+  );
+};
 
 const mapStateToProps = (_: AppState, ownProps: Props) => ({
-  onSubmit: ownProps.onSubmit
-})
+  onSubmit: ownProps.onSubmit,
+});
 
-export default connect(mapStateToProps)(PlayerForm)
+export default connect(mapStateToProps)(PlayerForm);

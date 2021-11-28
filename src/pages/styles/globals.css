@@ -1,39 +1,42 @@
-@import url('https://fonts.googleapis.com/css?family=Quicksand');
+@import url("https://fonts.googleapis.com/css?family=Quicksand");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 body {
-    background-image: linear-gradient(215deg, rgb(43, 0, 168) 0%, rgb(151, 1, 245) 85%);
-    color: white;
-    font-family: 'Quicksand', 'Roboto', 'Segoe UI', sans-serif ;
+  background-image: linear-gradient(
+    215deg,
+    rgb(43, 0, 168) 0%,
+    rgb(151, 1, 245) 85%
+  );
+  color: white;
+  font-family: "Quicksand", "Roboto", "Segoe UI", sans-serif;
 }
 
 .btn-primary {
-    @apply border border-solid rounded-md p-3 bg-white text-black font-bold text-xl
+  @apply border border-solid rounded-md p-3 bg-white text-black font-bold text-xl;
 }
 
 .color-btn-primary {
-    box-shadow: 0 6px 0 0 #301a6b;
+  box-shadow: 0 6px 0 0 #301a6b;
 }
 
 .bg-blue-team {
-    background-color: rgba(17, 19, 168, 0.52);
+  background-color: rgba(17, 19, 168, 0.52);
 }
 
 .bg-red-team {
-    background-color: rgba(168, 17, 17, 0.52);
-
+  background-color: rgba(168, 17, 17, 0.52);
 }
 
 .bg-purple {
-    background-color: #4901BE;
+  background-color: #4901be;
 }
 
 .bg-purple-2 {
-    background-color: #8701EA;
+  background-color: #8701ea;
 }
 
 .bg-blue {
-    background-color: #3A01B3;
+  background-color: #3a01b3;
 }

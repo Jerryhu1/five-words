@@ -1,5 +1,5 @@
-import {useSelector} from "react-redux";
-import {AppState} from "../..";
+import { useSelector } from "react-redux";
+import { AppState } from "../..";
 import TeamCard from "./TeamCard";
 
 const TeamDisplay = () => {
@@ -16,33 +16,36 @@ const TeamDisplay = () => {
           {!players
             ? null
             : Array.from(players).map(([k, v]) => (
-              <>
-                {!v.teamID && (
-                  <div className="bg-blue p-4 ">
-                    <li
-                      className={"uppercase font-bold " + (!v.isActive ? "text-gray-400" : "text-white")}
-                    >
-                      {v.name}
-                    </li>
-                  </div>
-                )}
-              </>
-            ))}
+                <>
+                  {!v.teamID && (
+                    <div className="bg-blue p-4 ">
+                      <li
+                        className={
+                          "uppercase font-bold " +
+                          (!v.isActive ? "text-gray-400" : "text-white")
+                        }
+                      >
+                        {v.name}
+                      </li>
+                    </div>
+                  )}
+                </>
+              ))}
         </ul>
       </div>
       <div className="w-3/4">
         <h2>Teams</h2>
         <div className={`grid grid-cols-2 grid-rows-2`}>
           {teams &&
-          sessionID &&
-          Array.from(teams).map(([key, team]) => (
-            <TeamCard
-              roomName={roomName}
-              team={team}
-              sessionID={sessionID}
-              players={players}
-            />
-          ))}
+            sessionID &&
+            Array.from(teams).map(([key, team]) => (
+              <TeamCard
+                roomName={roomName}
+                team={team}
+                sessionID={sessionID}
+                players={players}
+              />
+            ))}
         </div>
       </div>
     </div>

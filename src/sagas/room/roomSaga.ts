@@ -1,11 +1,18 @@
-import {AxiosResponse} from "axios";
-import {call, put, takeLatest} from "redux-saga/effects";
+import { AxiosResponse } from "axios";
+import { call, put, takeLatest } from "redux-saga/effects";
 import RoomClient from "../../client/room";
-import {FETCH_ACTIVE_PLAYER} from "../../store/player/types";
-import {RoomActionTypes} from "../../store/room/reducers";
-import {ADD_PLAYER_TO_ROOM, CREATE_ROOM, GET_ROOM, SET_ROOM, START_GAME, START_ROUND,} from "../../store/room/types";
-import {WEBSOCKET_SEND} from "@giantmachines/redux-websocket/dist";
-import {getType} from "typesafe-actions";
+import { FETCH_ACTIVE_PLAYER } from "../../store/player/types";
+import { RoomActionTypes } from "../../store/room/reducers";
+import {
+  ADD_PLAYER_TO_ROOM,
+  CREATE_ROOM,
+  GET_ROOM,
+  SET_ROOM,
+  START_GAME,
+  START_ROUND,
+} from "../../store/room/types";
+import { WEBSOCKET_SEND } from "@giantmachines/redux-websocket/dist";
+import { getType } from "typesafe-actions";
 import * as actions from "../../store/room/actions";
 
 export function* roomWatcher() {
@@ -19,8 +26,7 @@ export function* roomWatcher() {
       START_ROUND,
     ],
     roomFlow
-  )
-  ;
+  );
 }
 
 function* roomFlow(action: RoomActionTypes) {
@@ -32,7 +38,7 @@ function* roomFlow(action: RoomActionTypes) {
         RoomClient.getRoom,
         action.payload.roomName
       );
-      yield put({type: SET_ROOM, payload: {newState: response.data}});
+      yield put({ type: SET_ROOM, payload: { newState: response.data } });
       break;
     default:
       try {

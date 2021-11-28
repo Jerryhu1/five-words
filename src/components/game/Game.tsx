@@ -2,8 +2,8 @@ import React from "react";
 import InfoHeader from "./InfoHeader";
 import Timer from "./Timer";
 import WordCard from "./WordCard";
-import {AppState} from "../../index";
-import {connect, useSelector} from "react-redux";
+import { AppState } from "../../index";
+import { connect, useSelector } from "react-redux";
 import ChatBox from "./ChatBox";
 import TeamDisplay from "../lobby/TeamDisplay";
 import TeamCard from "../lobby/TeamCard";
@@ -26,15 +26,15 @@ export const Game: React.FC<Props & typeof dispatchProps> = () => {
       <div className="flex flex-row place-content-center">
         <div className="flex flex-col text-center">
           <div>
-            <InfoHeader/>
+            <InfoHeader />
           </div>
           <div>
             {
               // TODO: End round after timer finishes
               !showRoundTimer ? (
-                <Timer onTimeUp={onCountDownTimerFinish}/>
+                <Timer onTimeUp={onCountDownTimerFinish} />
               ) : (
-                <Timer/>
+                <Timer />
               )
             }
           </div>
@@ -43,19 +43,15 @@ export const Game: React.FC<Props & typeof dispatchProps> = () => {
       <div className="flex flex-row w-full gap-4">
         <div className="flex flex-col w-1/5 gap-4">
           {teams &&
-          Array.from(teams).map(([key, team]) => (
-            <TeamCard
-              team={team}
-              players={players}
-            />
-          ))}
+            Array.from(teams).map(([key, team]) => (
+              <TeamCard team={team} players={players} />
+            ))}
         </div>
         <div className="flex flex-col w-3/5 items-center place-content-center">
-
-          <WordCard/>
+          <WordCard />
         </div>
         <div className="flex w-2/5 pr-12">
-          <ChatBox/>
+          <ChatBox />
         </div>
       </div>
     </div>

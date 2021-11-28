@@ -9,7 +9,7 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import createSagaMiddleware from "redux-saga";
 import { rootSaga } from "./sagas/rootSaga";
 import reduxWebsocket from "@giantmachines/redux-websocket";
-import {rootReducer, RootState, SagaStore} from "./store";
+import { rootReducer, RootState, SagaStore } from "./store";
 import Application from "./pages/_app";
 
 const sagaMiddleware = createSagaMiddleware();

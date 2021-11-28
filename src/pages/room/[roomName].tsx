@@ -1,19 +1,19 @@
 import React from "react";
-import {useRouter} from "next/dist/client/router";
+import { useRouter } from "next/dist/client/router";
 import Lobby from "../../components/lobby/Lobby";
-import {addPlayerToRoom, getRoom} from "../../store/room/actions";
-import {useSelector} from "react-redux";
-import {connect as wsConnect} from "@giantmachines/redux-websocket";
-import {AppState} from "../../index";
+import { addPlayerToRoom, getRoom } from "../../store/room/actions";
+import { useSelector } from "react-redux";
+import { connect as wsConnect } from "@giantmachines/redux-websocket";
+import { AppState } from "../../index";
 import PlayerForm from "./playerForm";
-import {setActivePlayer} from "../../store/websocket/actions";
+import { setActivePlayer } from "../../store/websocket/actions";
 import Game from "../../components/game/Game";
 import SocketProvider from "./socketProvider";
-import {useAppSelector} from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 
 const Room = () => {
   const router = useRouter();
-  const {roomName} = router.query;
+  const { roomName } = router.query;
   React.useEffect(() => {
     if (roomName) {
       if (typeof roomName === "string") {
@@ -24,7 +24,7 @@ const Room = () => {
 
   const [showPlayerForm, setShowPlayerForm] = React.useState(false);
   const showGame = useSelector((state: AppState) => state.room.started);
-  const { activePlayer, sessionID } = useAppSelector(state => state.session)
+  const { activePlayer, sessionID } = useAppSelector(state => state.session);
 
   React.useEffect(() => {
     // Redirect user to player register page first
@@ -47,11 +47,9 @@ const Room = () => {
     <SocketProvider>
       <div className="h-screen">
         {showPlayerForm ? (
-          <PlayerForm onSubmit={onPlayerFormSubmit}/>
+          <PlayerForm onSubmit={onPlayerFormSubmit} />
         ) : (
-          <>
-            {showGame ? <Game/> : <Lobby/>}
-          </>
+          <>{showGame ? <Game /> : <Lobby />}</>
         )}
       </div>
     </SocketProvider>
