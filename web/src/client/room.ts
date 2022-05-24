@@ -1,8 +1,8 @@
-import { Http2SecureServer } from "http2";
 
-import axios, { AxiosInstance } from "axios";
+import axios, {AxiosInstance, AxiosResponse} from "axios";
+import {RoomState} from "../store/room";
 
-export class RoomClient {
+class RoomClient {
   private http: AxiosInstance;
 
   constructor(http: AxiosInstance) {
@@ -10,11 +10,11 @@ export class RoomClient {
   }
 
   getRoom = (name: string) => {
-    return this.http.get("/room/" + name);
+    return this.http.get<RoomState>("/room/" + name);
   };
 
-  createRoom = (scoreGoal: number, lang: string) => {
-    return this.http.post(`/room/create`, {
+  createRoom = (owner: string, scoreGoal: number, lang: string): Promise<AxiosResponse<RoomState>> => {
+    return this.http.post<RoomState>(`/room/create`, {
       scoreGoal: scoreGoal,
       language: lang,
     });

@@ -17,10 +17,10 @@ export const sessionSlice = createSlice({
     setSession: (state, action: PayloadAction<{ sessionID: string }>) => {
       state.sessionID = action.payload.sessionID;
     },
-    setActivePlayer: (state, action: PayloadAction<{ playerID: string }>) => {
-      state.activePlayer = action.payload.playerID;
+    setActivePlayer: (state, action: PayloadAction<{ name: string }>) => {
+      state.activePlayer = action.payload.name;
     },
   },
 });
-
+export const { setSession, setActivePlayer } = sessionSlice.actions
 export default sessionSlice.reducer;

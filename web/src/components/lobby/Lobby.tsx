@@ -1,9 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../..";
+import {useDispatch} from "react-redux";
+import {AppState} from "../..";
 import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
-import { startGame, startRound } from "../../store/room/actions";
+import {useAppSelector} from "../../store/hooks";
+import {startGame, startRound} from "../../../websocket/messages";
+import useWebSocket from "../../../hooks/useWebsocket";
 
 type Props = {
   roomName?: string;
@@ -11,14 +13,14 @@ type Props = {
 };
 
 const Lobby: React.FC<Props> = () => {
-  const roomName = useSelector((state: AppState) => state.room.name);
-  const showGame = useSelector((state: AppState) => state.room.started);
-  const dispatch = useDispatch();
+  const roomName = useAppSelector((state: AppState) => state.room.name);
+  const showGame = useAppSelector((state: AppState) => state.room.started);
+  const {sendMessage} = useWebSocket(true);
+
   const onStartGame = (roomName: string) => {
-    dispatch(startGame(roomName));
-    dispatch(startRound(roomName, 3, 30));
+    sendMessage(startGame({roomName: roomName}));
+    sendMessage(startRound({countdownTime: 5, roomName: roomName, roundTime: 30}));
   };
-  const teams = useSelector((state: AppState) => state.room.teams);
   const [canStart, setCanStart] = React.useState(true);
 
   // Uncomment when only allow to start with 2 players per team
@@ -39,8 +41,8 @@ const Lobby: React.FC<Props> = () => {
         </div>
       </div>
       <div className="flex flex-row">
-        <TeamDisplay />
-        {showGame && <Game />}
+        <TeamDisplay/>
+        {showGame && <Game/>}
       </div>
       <div className="flex justify-center">
         {!showGame && (

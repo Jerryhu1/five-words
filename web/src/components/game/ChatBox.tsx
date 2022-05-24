@@ -1,32 +1,15 @@
 import React, { FormEvent, useEffect } from "react";
-import { AppState } from "../..";
-import { Message } from "../../store/chat/types";
-import { sendMessage } from "../../store/chat/actions";
-import { connect } from "react-redux";
+import {useAppSelector} from "../../store/hooks";
 
-type Props = {
-  roomName?: string;
-  messages?: Message[];
-  sessionID?: string;
-  playerName?: string;
-};
 
-const dispatchProps = {
-  sendMessage: sendMessage,
-};
-
-const ChatBox: React.FC<Props & typeof dispatchProps> = ({
-  roomName,
-  messages,
-  sendMessage,
-  sessionID,
-  playerName,
-}) => {
+const ChatBox = () => {
   const [inputText, setInputText] = React.useState("");
-
+  const roomName = useAppSelector(state => state.room.name)
+  const { sessionID, activePlayer} = useAppSelector( state => state.session )
+  const { messages } = useAppSelector( state => state.chat )
   const onSubmit = (e: MouseEvent | FormEvent) => {
     e.preventDefault();
-    sendMessage(roomName ?? "", inputText, sessionID ?? "", playerName ?? "");
+    //sendMessage(roomName ?? "", inputText, sessionID ?? "", activePlayer ?? "");
     setInputText("");
   };
 
@@ -88,13 +71,4 @@ const ChatBox: React.FC<Props & typeof dispatchProps> = ({
   );
 };
 
-const mapStateToProps = (state: AppState, _: Props) => {
-  return {
-    roomName: state.room.name,
-    messages: state.chat.messages,
-    sessionID: state.session.sessionID,
-    playerName: state.session.activePlayer,
-  };
-};
-
-export default connect(mapStateToProps, dispatchProps)(ChatBox);
+export default ChatBox;

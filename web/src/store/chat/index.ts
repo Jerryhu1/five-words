@@ -1,11 +1,12 @@
-import { ChatState } from "./types";
-import * as actions from "./actions";
-import { ActionType } from "typesafe-actions";
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
-export type ChatActionTypes = ActionType<typeof actions>;
 
-const initialState: ChatState = { enabled: false, messages: [] };
+const initialState: ChatState = {enabled: false, messages: []};
+
+export interface ChatState {
+  messages: Message[];
+  enabled: boolean;
+}
 
 interface Message {
   timestamp: Date;

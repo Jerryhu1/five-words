@@ -1,12 +1,10 @@
 import React from "react";
-import { connect } from "react-redux";
-import { AppState } from "../../index";
 
 type Props = {
   onSubmit: (name: string) => void;
 };
 
-const PlayerForm: React.FC<Props> = ({ onSubmit }) => {
+const PlayerForm: React.FC<Props> = ({onSubmit}) => {
   const [player, setPlayer] = React.useState("");
   return (
     <div>
@@ -23,8 +21,5 @@ const PlayerForm: React.FC<Props> = ({ onSubmit }) => {
   );
 };
 
-const mapStateToProps = (_: AppState, ownProps: Props) => ({
-  onSubmit: ownProps.onSubmit,
-});
 
-export default connect(mapStateToProps)(PlayerForm);
+export default PlayerForm;

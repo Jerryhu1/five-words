@@ -1,24 +1,27 @@
-import { Player, Team } from "../../types/player";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../../index";
-import { addTeamPlayer } from "../../store/player/actions";
+import {Player, Team} from "../../types/player";
+import {AppState} from "../../index";
+import {useAppSelector} from "../../store/hooks";
+import useWebSocket from "../../../hooks/useWebsocket";
+import {addTeamPlayer} from "../../../websocket/messages";
 
 type Props = {
-  roomName?: string;
   team: Team;
-  sessionID?: string;
   players: Map<string, Player>;
 };
 
-const TeamCard: React.FC<Props> = ({ roomName, team, sessionID, players }) => {
-  const dispatch = useDispatch();
-  const inGame = useSelector((state: AppState) => state.room.started);
+const TeamCard: React.FC<Props> = ({team, players}) => {
+  const inGame = useAppSelector((state: AppState) => state.room.started);
+  const roomName = useAppSelector(state => state.room.name)
+  const {activePlayer, sessionID} = useAppSelector(state => state.session)
+  const {sendMessage} = useWebSocket(true);
 
   const onJoinTeam = (teamName: string) => {
     if (!sessionID) {
+      console.error("tried to join team without session")
       return;
     }
-    dispatch(addTeamPlayer(roomName ?? "", sessionID, teamName));
+
+    sendMessage(addTeamPlayer({playerID: activePlayer, roomName: roomName, team: teamName}))
   };
 
   return (
@@ -31,7 +34,7 @@ const TeamCard: React.FC<Props> = ({ roomName, team, sessionID, players }) => {
         {team.players.map(player => (
           <li
             className="uppercase p-2"
-            style={player === sessionID ? { fontWeight: "bold" } : {}}
+            style={player === sessionID ? {fontWeight: "bold"} : {}}
             key={player}
           >
             {players && players.get(player)?.name}

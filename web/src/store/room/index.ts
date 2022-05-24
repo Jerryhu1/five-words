@@ -1,7 +1,29 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RoomState, State } from "./types";
-import { Player, Team } from "../../types/player";
-import { RootState } from "../index";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {Player, Team} from "../../types/player";
+import {Card} from "../../types/card";
+
+export enum State {
+  LOBBY_STANDBY = "LOBBY_STANDBY",
+  ROUND_STARTING = "ROUND_STARTING",
+  ROUND_ONGOING = "ROUND_ONGOING",
+  ROUND_END = "ROUND_END",
+  GAME_OVER = "GAME_OVER",
+}
+
+export interface RoomState {
+  name: string;
+  owner: string;
+  players: Map<string, Player>;
+  teams: Map<string, Team>;
+  scoreGoal: number;
+  teamTurn: string;
+  currentCard: Card;
+  language: string;
+  timer: number;
+  started: boolean;
+  state: State;
+  currExplainer: string;
+}
 
 // Define the initial state using that type
 const initialState: RoomState = {
@@ -28,11 +50,11 @@ export const roomSlice = createSlice({
   initialState,
   reducers: {
     setRoom: (state, action: PayloadAction<RoomState>) => {
-      state = action.payload;
+     return action.payload
     },
   },
 });
 
-export const { setRoom } = roomSlice.actions;
+export const {setRoom} = roomSlice.actions;
 
 export default roomSlice.reducer;

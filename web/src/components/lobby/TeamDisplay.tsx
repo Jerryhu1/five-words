@@ -1,12 +1,12 @@
-import { useSelector } from "react-redux";
 import { AppState } from "../..";
 import TeamCard from "./TeamCard";
+import {useAppSelector} from "../../store/hooks";
 
 const TeamDisplay = () => {
-  const players = useSelector((state: AppState) => state.room.players);
-  const sessionID = useSelector((state: AppState) => state.session.sessionID);
-  const teams = useSelector((state: AppState) => state.room.teams);
-  const roomName = useSelector((state: AppState) => state.room.name);
+  const players = useAppSelector((state: AppState) => state.room.players);
+  const sessionID = useAppSelector((state: AppState) => state.session.sessionID);
+  const teams = useAppSelector((state: AppState) => state.room.teams);
+  const roomName = useAppSelector((state: AppState) => state.room.name);
 
   return (
     <div className="flex w-full gap-8">
@@ -40,9 +40,7 @@ const TeamDisplay = () => {
             sessionID &&
             Array.from(teams).map(([key, team]) => (
               <TeamCard
-                roomName={roomName}
                 team={team}
-                sessionID={sessionID}
                 players={players}
               />
             ))}

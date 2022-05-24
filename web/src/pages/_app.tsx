@@ -1,13 +1,16 @@
 import React from "react";
-import { AppProps } from "next/app";
+import {AppProps} from "next/app";
 import "./styles/globals.css";
-import { store } from "../store";
-import { Provider } from "react-redux";
+import {store} from "../store";
+import {Provider} from "react-redux";
+import SocketProvider from "./room/layout/SocketProvider";
 
-function FiveWords({ Component, pageProps }: AppProps) {
+function FiveWords({Component, pageProps}: AppProps) {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <SocketProvider>
+        <Component {...pageProps} />
+      </SocketProvider>
     </Provider>
   );
 }

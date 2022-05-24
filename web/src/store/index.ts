@@ -1,5 +1,5 @@
 import sessionReducer from "./websocket/reducers";
-import chatReducer from "./chat/reducer";
+import chatReducer from "./chat";
 import { configureStore } from "@reduxjs/toolkit";
 import roomReducer from "./room";
 

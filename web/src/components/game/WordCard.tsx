@@ -1,21 +1,22 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../";
-import { startRound } from "../../store/room/actions";
+import useWebSocket from "../../../hooks/useWebsocket";
+import {startRound} from "../../../websocket/messages";
+import {useAppSelector} from "../../store/hooks";
 
 type Props = {};
 
 const WordCard: React.FC<Props> = () => {
-  const card = useSelector((state: AppState) => state.room.currentCard);
-  const roomName = useSelector((state: AppState) => state.room.name);
-  const roundDone = useSelector((state: AppState) => state.room.timer === 0);
-  const isExplainer = useSelector(
+  const card = useAppSelector((state: AppState) => state.room.currentCard);
+  const roomName = useAppSelector((state: AppState) => state.room.name);
+  const isExplainer = useAppSelector(
     (state: AppState) => state.session.sessionID === state.room.currExplainer
   );
-  const dispatch = useDispatch();
+  const {sendMessage} = useWebSocket(true);
+
   const submit = () => {
     // TODO: These settings should not need to be passed for each round, settings have to be persisted
-    dispatch(startRound(roomName, 3, 30));
+    sendMessage(startRound({countdownTime: 3, roomName: roomName, roundTime: 30}));
   };
 
   return (

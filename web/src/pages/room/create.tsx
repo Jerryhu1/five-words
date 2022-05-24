@@ -1,46 +1,34 @@
-import React, {useContext} from "react";
+import React from "react";
 import PlayerForm from "./layout/PlayerForm";
 import RoomForm from "./layout/RoomForm";
 import RoomClient from "../../client/room";
 import {router} from "next/client";
-import {useAppSelector} from "../../store/hooks";
-import {setActivePlayer} from "../../store/websocket/actions";
-import {MessageType, newJoinRoomMessage, SocketContext} from "./layout/SocketProvider";
+import {useAppDispatch, useAppSelector} from "../../store/hooks";
+import {setRoom} from "../../store/room";
+import useWebSocket from "../../../hooks/useWebsocket";
+import {newJoinRoomMessage} from "../../../message/creators";
+import {setActivePlayer} from "../../store/websocket/reducers";
 
 const Create = () => {
   const [showPlayerForm, setShowPlayerForm] = React.useState(true);
   const {activePlayer, sessionID} = useAppSelector(store => store.session);
-  const {sendMessage, sessionId } = useContext(SocketContext)
   const [playerName, setPlayerName] = React.useState("");
+  const {sendMessage, lastMessage, readyState} = useWebSocket(true);
+
+  const dispatch = useAppDispatch()
   const onSubmitPlayerForm = (name: string) => {
     setPlayerName(name);
+    dispatch(setActivePlayer({name: name}));
+    setShowPlayerForm(false)
   };
 
-  const onSubmitRoomForm = (scoreGoal: number, language: string) => {
-    try {
-      // Register room in server, and update active room to response
-      RoomClient.createRoom(scoreGoal, language).then(
-        res => {
-          addPlayerToRoom(res.data.name, sessionID, activePlayer);
-          router.push("/room/" + res.data.name);
-        },
-        err => {
-          console.log(err);
-        }
-
-      );
-    } catch (err) {
-    }
-
-    // Create room
-
-    // Add player to room
-    sendMessage(newJoinRoomMessage({
-      playerName: name,
-      sessionId: sessionId,
-    }));
-    setActivePlayer(name);
+  const onSubmitRoomForm = async (scoreGoal: number, language: string) => {
+    // Register room in server, and update active room to response
+    const res = await RoomClient.createRoom(sessionID, scoreGoal, language);
+    dispatch(setRoom(res.data))
+    sendMessage(newJoinRoomMessage(sessionID, playerName, res.data.name));
     setShowPlayerForm(false);
+    router.push("/room/" + res.data.name);
   };
 
   return (
