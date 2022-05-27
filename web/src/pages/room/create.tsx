@@ -6,8 +6,8 @@ import {router} from "next/client";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {setRoom} from "../../store/room";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {newJoinRoomMessage} from "../../../message/creators";
 import {setActivePlayer} from "../../store/websocket/reducers";
+import {joinRoom} from "../../../message/types";
 
 const Create = () => {
   const [showPlayerForm, setShowPlayerForm] = React.useState(true);
@@ -26,7 +26,9 @@ const Create = () => {
     // Register room in server, and update active room to response
     const res = await RoomClient.createRoom(sessionID, scoreGoal, language);
     dispatch(setRoom(res.data))
-    sendMessage(newJoinRoomMessage(sessionID, playerName, res.data.name));
+    sendMessage(joinRoom({
+      playerName: playerName, roomName: res.data.name, sessionID: sessionID
+    }))
     setShowPlayerForm(false);
     router.push("/room/" + res.data.name);
   };

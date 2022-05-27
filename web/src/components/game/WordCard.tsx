@@ -1,8 +1,8 @@
 import React from "react";
 import { AppState } from "../../";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {startRound} from "../../../websocket/messages";
 import {useAppSelector} from "../../store/hooks";
+import {startRound} from "../../../message/types";
 
 type Props = {};
 

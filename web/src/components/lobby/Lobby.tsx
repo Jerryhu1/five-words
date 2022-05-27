@@ -4,8 +4,8 @@ import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
 import {useAppSelector} from "../../store/hooks";
-import {startGame, startRound} from "../../../websocket/messages";
 import useWebSocket from "../../../hooks/useWebsocket";
+import {startGame, startRound} from "../../../message/types";
 
 type Props = {
   roomName?: string;
@@ -33,16 +33,15 @@ const Lobby: React.FC<Props> = () => {
   // }, [teams])
 
   return (
-    <div className="flex flex-col px-32 py-16 h-full">
+    <div className="flex flex-col px-7 lg:px-32 py-16 h-full">
       <div className="flex justify-center">
         <div className="flex flex-col justify-center">
-          <h1 className="text-6xl font-bold text-center">Lobby</h1>
-          <h1 className="text-center">{roomName}</h1>
+          {!showGame && <h1 className="text-6xl font-bold text-center">Lobby</h1>}
+          <h1 className="text-center">Room: {roomName}</h1>
         </div>
       </div>
       <div className="flex flex-row">
-        <TeamDisplay/>
-        {showGame && <Game/>}
+        {showGame ? <Game/> : <TeamDisplay/>}
       </div>
       <div className="flex justify-center">
         {!showGame && (

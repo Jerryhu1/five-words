@@ -8,7 +8,7 @@ import PlayerForm from "./layout/PlayerForm";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {setRoom} from "../../store/room";
 import {setActivePlayer} from "../../store/websocket/reducers";
-import {addPlayerToRoom} from "../../../websocket/messages";
+import {addPlayerToRoom} from "../../../message/types";
 
 
 const Room = () => {
@@ -38,7 +38,6 @@ const Room = () => {
   }, [activePlayer, sessionID]);
 
   const onPlayerFormSubmit = (name: string) => {
-    console.log(name)
     dispatch(setActivePlayer({name: name}));
     sendMessage(addPlayerToRoom({playerName: name, roomName: roomName, sessionID: sessionID}));
     setShowPlayerForm(false);
@@ -46,7 +45,7 @@ const Room = () => {
 
   const [loading, setLoading] = React.useState(true)
 
-  const Component = () => {
+  const renderContent = () => {
     if (loading) {
       return <h1>Loading, please wait</h1>
     }
@@ -55,11 +54,11 @@ const Room = () => {
     }
 
     return <Lobby/>
-
   }
+
   return (
-    <div className="h-screen bg-gray-200">
-      <Component/>
+    <div className="h-screen">
+      {renderContent()}
     </div>
   );
 };

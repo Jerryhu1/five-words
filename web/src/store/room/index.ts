@@ -13,8 +13,8 @@ export enum State {
 export interface RoomState {
   name: string;
   owner: string;
-  players: Map<string, Player>;
-  teams: Map<string, Team>;
+  players: PlayerMap;
+  teams: TeamMap;
   scoreGoal: number;
   teamTurn: string;
   currentCard: Card;
@@ -25,12 +25,14 @@ export interface RoomState {
   currExplainer: string;
 }
 
+export type PlayerMap = { [key: string]: Player };
+export type TeamMap = { [key: string]: Team };
 // Define the initial state using that type
 const initialState: RoomState = {
   name: "",
   owner: "",
-  players: new Map<string, Player>(),
-  teams: new Map<string, Team>(),
+  players: {},
+  teams: {},
   scoreGoal: 0,
   teamTurn: "",
   currentCard: {
@@ -50,7 +52,7 @@ export const roomSlice = createSlice({
   initialState,
   reducers: {
     setRoom: (state, action: PayloadAction<RoomState>) => {
-     return action.payload
+      return action.payload
     },
   },
 });

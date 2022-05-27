@@ -1,16 +1,11 @@
 import React, {useEffect} from "react";
 import {ReadyState} from "react-use-websocket";
-import {
-  AddPlayerToRoomMessage,
-  AddTeamPlayerMessage,
-  GameMessage, MessageType,
-  SetRoomMessage, SocketMessage,
-  StartGameMessage, StartRoundMessage
-} from "../../../../message/types";
 import useWebSocket from "../../../../hooks/useWebsocket";
 import {setSession} from "../../../store/websocket/reducers";
 import {useAppDispatch} from "../../../store/hooks";
-import {setRoom} from "../../../store/room";
+import {RoomState, setRoom} from "../../../store/room";
+import { ReceiveMessageType, SocketMessage} from "../../../store/websocket/types";
+import {addMessage, Message} from "../../../store/chat";
 
 const SocketProvider: React.FC = ({children}) => {
   // TODO: dynamically determine url based on environment
@@ -19,7 +14,6 @@ const SocketProvider: React.FC = ({children}) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log(lastMessage);
     if (lastMessage) {
       handleSocketMessage(lastMessage as MessageEvent);
     }
@@ -35,31 +29,24 @@ const SocketProvider: React.FC = ({children}) => {
 
   const handleSocketMessage = (message: MessageEvent): void => {
     const msg = JSON.parse(message.data) as SocketMessage;
-    if (msg.type === MessageType.ClientRegistered) {
+    if (msg.type === ReceiveMessageType.ClientRegistered) {
       dispatch(setSession({sessionID: msg.body}));
       return;
     }
 
-    const body = JSON.parse(msg.body);
+    const body = msg.body
 
     switch (msg.type) {
-      case MessageType.SetRoom: {
-        const b = body as SetRoomMessage
-        dispatch(setRoom(b.body))
+      case ReceiveMessageType.SetRoom: {
+        const b = body as RoomState
+        dispatch(setRoom(b))
         break
       }
-      case MessageType.AddTeamPlayer:
-        const b = body as AddTeamPlayerMessage;
+      case ReceiveMessageType.AddMessage: {
+        const b = body as Message
+        dispatch(addMessage(b))
         break
-      case MessageType.AddPlayerToRoom:
-        body as AddPlayerToRoomMessage;
-        break
-      case MessageType.StartGame:
-        body as StartGameMessage;
-        break
-      case MessageType.StartRound:
-        body as StartRoundMessage;
-        break
+      }
       default:
         console.error("Unknown message type: " + msg.type);
         break
@@ -69,9 +56,6 @@ const SocketProvider: React.FC = ({children}) => {
   return (
     <>
       {children}
-      <span>The WebSocket is currently {connectionStatus}</span>
-      {lastMessage ? <span>Last message: {lastMessage.data}</span> : null}
-      SessionId: {sessionId}
     </>
   );
 };

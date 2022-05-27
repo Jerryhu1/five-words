@@ -2,28 +2,34 @@ import {Player, Team} from "../../types/player";
 import {AppState} from "../../index";
 import {useAppSelector} from "../../store/hooks";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {addTeamPlayer} from "../../../websocket/messages";
+import {useMemo} from "react";
+import {PlayerMap} from "../../store/room";
+import {addTeamPlayer} from "../../../message/types";
 
 type Props = {
   team: Team;
-  players: Map<string, Player>;
 };
 
-const TeamCard: React.FC<Props> = ({team, players}) => {
+const getPlayersForTeam = (players: PlayerMap, team: Team): Player[] => {
+  return team.players.map(player => players[player]).filter(player => player !== undefined) as Player[]
+}
+
+const TeamCard = ({team}: Props) => {
   const inGame = useAppSelector((state: AppState) => state.room.started);
   const roomName = useAppSelector(state => state.room.name)
+  const players = useAppSelector(state => state.room.players);
   const {activePlayer, sessionID} = useAppSelector(state => state.session)
   const {sendMessage} = useWebSocket(true);
 
+  const teamPlayers = useMemo(() => getPlayersForTeam(players, team), [players, team])
   const onJoinTeam = (teamName: string) => {
     if (!sessionID) {
       console.error("tried to join team without session")
       return;
     }
 
-    sendMessage(addTeamPlayer({playerID: activePlayer, roomName: roomName, team: teamName}))
+    sendMessage(addTeamPlayer({playerID: sessionID, roomName: roomName, team: teamName}))
   };
-
   return (
     <div
       key={team.name}
@@ -31,13 +37,13 @@ const TeamCard: React.FC<Props> = ({team, players}) => {
     >
       <h3 className="text-xl font-bold text-center">{team.name}</h3>
       <ul>
-        {team.players.map(player => (
+        {teamPlayers.map(player => (
           <li
             className="uppercase p-2"
-            style={player === sessionID ? {fontWeight: "bold"} : {}}
-            key={player}
+            style={player.id === sessionID ? {fontWeight: "bold"} : {}}
+            key={player.id}
           >
-            {players && players.get(player)?.name}
+            {player.name}
           </li>
         ))}
       </ul>

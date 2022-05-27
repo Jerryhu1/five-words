@@ -8,7 +8,7 @@ export interface ChatState {
   enabled: boolean;
 }
 
-interface Message {
+export interface Message {
   timestamp: Date;
   text: string;
   playerID: string;
@@ -28,4 +28,5 @@ export const chatSlice = createSlice({
   },
 });
 
+export const {addMessage, setEnabled} = chatSlice.actions;
 export default chatSlice.reducer;
