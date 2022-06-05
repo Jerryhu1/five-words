@@ -5,15 +5,16 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "test": "jest --detectOpenHandles --forceExit",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "heroku-posbuild": "npm run build",
     "start": "next start -p $PORT"
   },
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
-    "@craco/craco": "^6.2.0",
     "@reduxjs/toolkit": "^1.6.2",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.7",
@@ -29,7 +30,6 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",
-    "react-scripts": "4.0.1",
     "react-use-websocket": "^2.9.1",
     "redux": "^4.0.5",
     "reselect": "^4.0.0",

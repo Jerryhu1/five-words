@@ -10,6 +10,7 @@ import (
 	ws "github.com/jerryhu1/five-words/websocket"
 	"log"
 	"net/http"
+	"os"
 )
 
 var upgrader = websocket.Upgrader{
@@ -22,6 +23,10 @@ var websocketSrv *ws.Service
 var roomSrv *room.Service
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	store, err := redis.NewStore()
 	if err != nil {
 		panic(err)
@@ -41,10 +46,12 @@ func main() {
 	r.HandleFunc("/", handle)
 	r.HandleFunc("/room/create", ctrl.CreateRoom)
 	r.HandleFunc("/room/{roomName}", ctrl.GetRoom)
+
+	address := fmt.Sprintf(":%s", port)
 	//r.HandleFunc("/room/{roomName}/add", ctrl.AddPlayerToRoom)
 	//r.HandleFunc("/room/{roomName}/setPlayerTeam", ctrl.SetPlayerTeam)
-	fmt.Println("Listening on port :8080")
-	log.Fatal(http.ListenAndServe("127.0.0.1:8080", r))
+	fmt.Printf("Listening on port :%s\n", port)
+	log.Fatal(http.ListenAndServe(address, r))
 }
 
 func handle(w http.ResponseWriter, r *http.Request) {
