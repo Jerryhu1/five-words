@@ -22,5 +22,5 @@ export const sessionSlice = createSlice({
     },
   },
 });
-export const { setSession, setActivePlayer } = sessionSlice.actions
+export const { setSession, setActivePlayer } = sessionSlice.actions;
 export default sessionSlice.reducer;

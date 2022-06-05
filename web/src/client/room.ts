@@ -1,6 +1,5 @@
-
-import axios, {AxiosInstance, AxiosResponse} from "axios";
-import {RoomState} from "../store/room";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
+import { RoomState } from "../store/room";
 
 class RoomClient {
   private http: AxiosInstance;
@@ -13,7 +12,11 @@ class RoomClient {
     return this.http.get<RoomState>("/room/" + name);
   };
 
-  createRoom = (owner: string, scoreGoal: number, lang: string): Promise<AxiosResponse<RoomState>> => {
+  createRoom = (
+    owner: string,
+    scoreGoal: number,
+    lang: string
+  ): Promise<AxiosResponse<RoomState>> => {
     return this.http.post<RoomState>(`/room/create`, {
       scoreGoal: scoreGoal,
       language: lang,

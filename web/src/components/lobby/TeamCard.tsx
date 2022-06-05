@@ -1,34 +1,41 @@
-import {Player, Team} from "../../types/player";
-import {AppState} from "../../index";
-import {useAppSelector} from "../../store/hooks";
+import { Player, Team } from "../../types/player";
+import { AppState } from "../../index";
+import { useAppSelector } from "../../store/hooks";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {useMemo} from "react";
-import {PlayerMap} from "../../store/room";
-import {addTeamPlayer} from "../../../message/types";
+import { useMemo } from "react";
+import { PlayerMap } from "../../store/room";
+import { addTeamPlayer } from "../../../message/types";
 
 type Props = {
   team: Team;
 };
 
 const getPlayersForTeam = (players: PlayerMap, team: Team): Player[] => {
-  return team.players.map(player => players[player]).filter(player => player !== undefined) as Player[]
-}
+  return team.players
+    .map(player => players[player])
+    .filter(player => player !== undefined) as Player[];
+};
 
-const TeamCard = ({team}: Props) => {
+const TeamCard = ({ team }: Props) => {
   const inGame = useAppSelector((state: AppState) => state.room.started);
-  const roomName = useAppSelector(state => state.room.name)
+  const roomName = useAppSelector(state => state.room.name);
   const players = useAppSelector(state => state.room.players);
-  const {activePlayer, sessionID} = useAppSelector(state => state.session)
-  const {sendMessage} = useWebSocket(true);
+  const { activePlayer, sessionID } = useAppSelector(state => state.session);
+  const { sendMessage } = useWebSocket(true);
 
-  const teamPlayers = useMemo(() => getPlayersForTeam(players, team), [players, team])
+  const teamPlayers = useMemo(
+    () => getPlayersForTeam(players, team),
+    [players, team]
+  );
   const onJoinTeam = (teamName: string) => {
     if (!sessionID) {
-      console.error("tried to join team without session")
+      console.error("tried to join team without session");
       return;
     }
 
-    sendMessage(addTeamPlayer({playerID: sessionID, roomName: roomName, team: teamName}))
+    sendMessage(
+      addTeamPlayer({ playerID: sessionID, roomName: roomName, team: teamName })
+    );
   };
   return (
     <div
@@ -40,7 +47,7 @@ const TeamCard = ({team}: Props) => {
         {teamPlayers.map(player => (
           <li
             className="uppercase p-2"
-            style={player.id === sessionID ? {fontWeight: "bold"} : {}}
+            style={player.id === sessionID ? { fontWeight: "bold" } : {}}
             key={player.id}
           >
             {player.name}

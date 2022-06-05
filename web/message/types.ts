@@ -1,4 +1,4 @@
-import {RoomState} from "../src/store/room";
+import { RoomState } from "../src/store/room";
 
 export enum SendMessageType {
   CREATE_ROOM = "CREATE_ROOM",
@@ -37,20 +37,20 @@ type AddTeamPlayerBody = {
   roomName: string;
   playerID: string;
   team: string;
-}
+};
 
 type JoinRoomBody = {
   roomName: string;
   playerName: string;
   sessionID: string;
-}
+};
 
 type ChatMessageBody = {
   roomName: string;
   playerID: string;
   playerName: string;
-  text: string
-}
+  text: string;
+};
 
 const addPlayerToRoom = (payload: AddPlayerToRoomPayload): RoomMessage => ({
   type: SendMessageType.ADD_PLAYER_TO_ROOM,
@@ -74,21 +74,29 @@ const startRound = (payload: StartRoundBody): RoomMessage => ({
 const addTeamPlayer = (payload: AddTeamPlayerBody): RoomMessage => ({
   type: SendMessageType.ADD_TEAM_PLAYER,
   body: payload,
-})
+});
 
 const joinRoom = (payload: JoinRoomBody): RoomMessage => ({
   type: SendMessageType.JOIN_ROOM,
-  body: payload
-})
+  body: payload,
+});
 
 const chatMessage = (payload: ChatMessageBody): RoomMessage => ({
   type: SendMessageType.SEND_MESSAGE,
   body: payload,
-})
+});
 
 export interface RoomMessage {
   type: string;
   body: any;
 }
 
-export {addTeamPlayer, addPlayerToRoom, setRoom, startGame, startRound, chatMessage, joinRoom};
+export {
+  addTeamPlayer,
+  addPlayerToRoom,
+  setRoom,
+  startGame,
+  startRound,
+  chatMessage,
+  joinRoom,
+};

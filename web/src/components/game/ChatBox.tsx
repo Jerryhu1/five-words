@@ -1,32 +1,37 @@
-import React, {FormEvent, useEffect} from "react";
-import {useAppSelector} from "../../store/hooks";
+import React, { FormEvent, useEffect } from "react";
+import { useAppSelector } from "../../store/hooks";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {chatMessage} from "../../../message/types";
-
+import { chatMessage } from "../../../message/types";
 
 const ChatBox = () => {
-  const [inputText, setInputText] = React.useState(() => {return ""});
-  const roomName = useAppSelector(state => state.room.name)
-  const {sessionID, activePlayer} = useAppSelector(state => state.session)
-  const {messages} = useAppSelector(state => state.chat)
-  const {sendMessage} = useWebSocket(true);
+  const [inputText, setInputText] = React.useState(() => {
+    return "";
+  });
+  const roomName = useAppSelector(state => state.room.name);
+  const { sessionID, activePlayer } = useAppSelector(state => state.session);
+  const { messages } = useAppSelector(state => state.chat);
+  const { sendMessage } = useWebSocket(true);
 
   const onSubmit = (e: MouseEvent | FormEvent) => {
     if (inputText === "") {
       return;
     }
     e.preventDefault();
-    sendMessage(chatMessage({
-      playerID: sessionID, playerName: activePlayer, roomName: roomName, text: inputText
-
-    }));
-    console.log("test")
+    sendMessage(
+      chatMessage({
+        playerID: sessionID,
+        playerName: activePlayer,
+        roomName: roomName,
+        text: inputText,
+      })
+    );
+    console.log("test");
     setInputText("");
   };
 
   const chatBottom = React.useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
-    chatBottom.current?.scrollIntoView({behavior: "smooth"});
+    chatBottom.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -55,7 +60,7 @@ const ChatBox = () => {
               </li>
             ))}
           </ul>
-          <div ref={chatBottom}/>
+          <div ref={chatBottom} />
         </div>
         <div id="chatbox-input" className="flex border-t-2 mt-2 pt-2">
           <form

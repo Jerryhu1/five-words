@@ -4,7 +4,7 @@ type Props = {
   onSubmit: (name: string) => void;
 };
 
-const PlayerForm: React.FC<Props> = ({onSubmit}) => {
+const PlayerForm: React.FC<Props> = ({ onSubmit }) => {
   const [player, setPlayer] = React.useState("");
   return (
     <div>
@@ -20,6 +20,5 @@ const PlayerForm: React.FC<Props> = ({onSubmit}) => {
     </div>
   );
 };
-
 
 export default PlayerForm;

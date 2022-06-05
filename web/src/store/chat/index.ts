@@ -1,7 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
-const initialState: ChatState = {enabled: false, messages: []};
+const initialState: ChatState = { enabled: false, messages: [] };
 
 export interface ChatState {
   messages: Message[];
@@ -28,5 +27,5 @@ export const chatSlice = createSlice({
   },
 });
 
-export const {addMessage, setEnabled} = chatSlice.actions;
+export const { addMessage, setEnabled } = chatSlice.actions;
 export default chatSlice.reducer;

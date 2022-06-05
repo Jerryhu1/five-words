@@ -1,13 +1,7 @@
-import {connect, useSelector} from "react-redux";
-import {AppState} from "../..";
-import {createSelector} from "reselect";
-import {Team} from "../../types/player";
-import {useAppSelector} from "../../store/hooks";
-
-type Props = {
-  currTeam?: Team;
-  currExplainer?: string;
-};
+import { useSelector } from "react-redux";
+import { AppState } from "../..";
+import { createSelector } from "reselect";
+import { useAppSelector } from "../../store/hooks";
 
 const playerSelector = (state: AppState) => state.room.players;
 const teamSelector = (state: AppState) => state.room.teams;
@@ -23,12 +17,12 @@ const currExplainerSelector = createSelector(
   }
 );
 
-const InfoHeader: React.FC<Props> = () => {
-  const currTeam = useSelector((state: AppState) =>
-    state.room.teams[state.room.teamTurn]
+const InfoHeader = () => {
+  const currTeam = useSelector(
+    (state: AppState) => state.room.teams[state.room.teamTurn]
   );
 
-  const timer = useAppSelector(state => state.room.timer)
+  const timer = useAppSelector(state => state.room.timer);
   if (!currTeam) {
     console.error(`could not get current team`);
   }
@@ -39,19 +33,19 @@ const InfoHeader: React.FC<Props> = () => {
 
   const renderTimer = () => {
     if (timer !== 0) {
-      return(<h3 className="text-4xl font-bold">
-        It's
-        <span className="uppercase">
-          {!currExplainer ? null : currExplainer}
-        </span>
-        's turn!
-      </h3>)
+      return (
+        <h3 className="text-4xl font-bold">
+          It's
+          <span className="uppercase">
+            {!currExplainer ? null : currExplainer}
+          </span>
+          's turn!
+        </h3>
+      );
     }
 
-    return (
-      <h3 className="text-4xl font-bold">Time's up!</h3>
-    )
-  }
+    return <h3 className="text-4xl font-bold">Time's up!</h3>;
+  };
 
   return (
     <div className="flex flex-col">

@@ -1,11 +1,10 @@
-import {useDispatch} from "react-redux";
-import {AppState} from "../..";
+import { AppState } from "../..";
 import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
-import {useAppSelector} from "../../store/hooks";
+import { useAppSelector } from "../../store/hooks";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {startGame, startRound} from "../../../message/types";
+import { startGame, startRound } from "../../../message/types";
 
 type Props = {
   roomName?: string;
@@ -15,11 +14,13 @@ type Props = {
 const Lobby: React.FC<Props> = () => {
   const roomName = useAppSelector((state: AppState) => state.room.name);
   const showGame = useAppSelector((state: AppState) => state.room.started);
-  const {sendMessage} = useWebSocket(true);
+  const { sendMessage } = useWebSocket(true);
 
   const onStartGame = (roomName: string) => {
-    sendMessage(startGame({roomName: roomName}));
-    sendMessage(startRound({countdownTime: 5, roomName: roomName, roundTime: 30}));
+    sendMessage(startGame({ roomName: roomName }));
+    sendMessage(
+      startRound({ countdownTime: 5, roomName: roomName, roundTime: 30 })
+    );
   };
   const [canStart, setCanStart] = React.useState(true);
 
@@ -36,12 +37,14 @@ const Lobby: React.FC<Props> = () => {
     <div className="flex flex-col px-7 lg:px-32 py-16 h-full">
       <div className="flex justify-center">
         <div className="flex flex-col justify-center">
-          {!showGame && <h1 className="text-6xl font-bold text-center">Lobby</h1>}
+          {!showGame && (
+            <h1 className="text-6xl font-bold text-center">Lobby</h1>
+          )}
           <h1 className="text-center">Room: {roomName}</h1>
         </div>
       </div>
       <div className="flex flex-row">
-        {showGame ? <Game/> : <TeamDisplay/>}
+        {showGame ? <Game /> : <TeamDisplay />}
       </div>
       <div className="flex justify-center">
         {!showGame && (

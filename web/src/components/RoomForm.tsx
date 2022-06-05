@@ -1,14 +1,10 @@
 import React from "react";
-import { AppState } from "../../index";
-import { connect } from "react-redux";
 
 type Props = {
   onSubmit: (scoreGoal: number, language: string) => void;
 };
 
-const RoomForm: React.FC<Props> = ({ onSubmit }) => {
-  const [room, setRoom] = React.useState("");
-  const [player, setPlayer] = React.useState("");
+const RoomForm = ({ onSubmit }: Props) => {
   const [scoreGoal, setScoreGoal] = React.useState(0);
   const [language, setLanguage] = React.useState("");
 
@@ -40,8 +36,4 @@ const RoomForm: React.FC<Props> = ({ onSubmit }) => {
   );
 };
 
-const mapStateToProps = (_: AppState, ownProps: Props) => ({
-  onSubmit: ownProps.onSubmit,
-});
-
-export default connect(mapStateToProps)(RoomForm);
+export default RoomForm;

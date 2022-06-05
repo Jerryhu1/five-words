@@ -1,8 +1,8 @@
 import React from "react";
 import { AppState } from "../../";
 import useWebSocket from "../../../hooks/useWebsocket";
-import {useAppSelector} from "../../store/hooks";
-import {startRound} from "../../../message/types";
+import { useAppSelector } from "../../store/hooks";
+import { startRound } from "../../../message/types";
 
 type Props = {};
 
@@ -12,11 +12,13 @@ const WordCard: React.FC<Props> = () => {
   const isExplainer = useAppSelector(
     (state: AppState) => state.session.sessionID === state.room.currExplainer
   );
-  const {sendMessage} = useWebSocket(true);
+  const { sendMessage } = useWebSocket(true);
 
   const submit = () => {
     // TODO: These settings should not need to be passed for each round, settings have to be persisted
-    sendMessage(startRound({countdownTime: 3, roomName: roomName, roundTime: 30}));
+    sendMessage(
+      startRound({ countdownTime: 3, roomName: roomName, roundTime: 30 })
+    );
   };
 
   return (

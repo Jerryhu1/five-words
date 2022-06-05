@@ -1,6 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {Player, Team} from "../../types/player";
-import {Card} from "../../types/card";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Player, Team } from "../../types/player";
+import { Card } from "../../types/card";
 
 export enum State {
   LOBBY_STANDBY = "LOBBY_STANDBY",
@@ -52,11 +52,11 @@ export const roomSlice = createSlice({
   initialState,
   reducers: {
     setRoom: (state, action: PayloadAction<RoomState>) => {
-      return action.payload
+      return action.payload;
     },
   },
 });
 
-export const {setRoom} = roomSlice.actions;
+export const { setRoom } = roomSlice.actions;
 
 export default roomSlice.reducer;
