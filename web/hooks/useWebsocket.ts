@@ -1,8 +1,9 @@
 import useWs from "react-use-websocket";
+import {getWsServerHost} from "../server";
 
 const useWebSocket = (connect: boolean) => {
   const { lastMessage, readyState, sendMessage } = useWs(
-    "ws://localhost:8080",
+    getWsServerHost,
     { share: true },
     connect
   );

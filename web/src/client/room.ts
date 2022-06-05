@@ -42,7 +42,7 @@ class RoomClient {
 }
 
 const http = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: "/api",
 });
 
 export default new RoomClient(http);

@@ -29,7 +29,7 @@ func main() {
 	}
 	store, err := redis.NewStore()
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("Could not create redis store: %s", err))
 	}
 	roomSrv = room.NewService(store)
 	websocketSrv = ws.New(roomSrv)
