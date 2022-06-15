@@ -1,7 +1,7 @@
 import { Player, Team } from "../../types/player";
 import { AppState } from "../../index";
 import { useAppSelector } from "../../store/hooks";
-import useWebSocket from "../../../hooks/useWebsocket";
+import useWebSocket from "../../hooks/useWebsocket";
 import { useMemo } from "react";
 import { PlayerMap } from "../../store/room";
 import { addTeamPlayer } from "../../../message/types";

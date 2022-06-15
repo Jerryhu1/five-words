@@ -1,6 +1,6 @@
 import React from "react";
 import { AppState } from "../../";
-import useWebSocket from "../../../hooks/useWebsocket";
+import useWebSocket from "../../hooks/useWebsocket";
 import { useAppSelector } from "../../store/hooks";
 import { startRound } from "../../../message/types";
 

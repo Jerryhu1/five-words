@@ -1,6 +1,6 @@
 import React, { FormEvent, useEffect } from "react";
 import { useAppSelector } from "../../store/hooks";
-import useWebSocket from "../../../hooks/useWebsocket";
+import useWebSocket from "../../hooks/useWebsocket";
 import { chatMessage } from "../../../message/types";
 
 const ChatBox = () => {

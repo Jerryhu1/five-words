@@ -4,7 +4,7 @@ import RoomForm from "../../components/RoomForm";
 import RoomClient from "../../client/room";
 import {useAppDispatch, useAppSelector} from "../../store/hooks";
 import {setRoom} from "../../store/room";
-import useWebSocket from "../../../hooks/useWebsocket";
+import useWebSocket from "../../hooks/useWebsocket";
 import {setActivePlayer} from "../../store/websocket/reducers";
 import {joinRoom} from "../../../message/types";
 import {useRouter} from "next/router";

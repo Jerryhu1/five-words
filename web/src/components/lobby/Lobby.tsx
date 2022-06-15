@@ -3,7 +3,7 @@ import TeamDisplay from "./TeamDisplay";
 import Game from "../game/Game";
 import React from "react";
 import { useAppSelector } from "../../store/hooks";
-import useWebSocket from "../../../hooks/useWebsocket";
+import useWebSocket from "../../hooks/useWebsocket";
 import { startGame, startRound } from "../../../message/types";
 
 type Props = {

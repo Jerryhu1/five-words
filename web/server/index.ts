@@ -5,22 +5,7 @@ import {createProxyMiddleware} from "http-proxy-middleware";
 const host = process.env.SERVER_HOST || "127.0.0.1:8080"
 const isPro = process.env.NODE_ENV === "production",
   version = process.env.NEXT_PUBLIC_VERSION || "dev mode"
-console.log(process.env.NODE_ENV)
-export const getWsServerHost = () => {
-  if (process.env.NODE_ENV === "production") {
-    return `wss://${host}`
-  }
 
-  return `ws://${host}`
-}
-
-export const getHttpServerHost = () => {
-  if (process.env.NODE_ENV === "production") {
-    return `https://${host}`
-  }
-
-  return `http://${host}`
-}
 const banner = `
 
 ███████╗██╗██╗░░░██╗███████╗  ░██╗░░░░░░░██╗░█████╗░██████╗░██████╗░░██████╗
@@ -52,7 +37,7 @@ const handle = app.getRequestHandler();
   await app.prepare();
   const server = express();
   const ws = createProxyMiddleware('/socket', {
-    target: "http://localhost:8080",
+    target: host,
     changeOrigin: true,
     ws: true,
     logLevel: 'debug',
@@ -60,7 +45,7 @@ const handle = app.getRequestHandler();
   });
 
   const api = createProxyMiddleware({
-    target: "http://localhost:8080",
+    target: host,
     changeOrigin: true,
     logLevel: 'debug',
     pathRewrite: {"^/api": ""}

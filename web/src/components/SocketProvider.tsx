@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { ReadyState } from "react-use-websocket";
-import useWebSocket from "../../hooks/useWebsocket";
+import useWebSocket from "../hooks/useWebsocket";
 import {useAppDispatch} from "../store/hooks";
 import {ReceiveMessageType, SocketMessage} from "../store/websocket/types";
 import {setSession} from "../store/websocket/reducers";

@@ -1,7 +1,7 @@
 import React from "react";
 import Lobby from "../../components/lobby/Lobby";
 import RoomClient from "../../client/room";
-import useWebSocket from "../../../hooks/useWebsocket";
+import useWebSocket from "../../hooks/useWebsocket";
 import PlayerForm from "../../components/PlayerForm";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setRoom } from "../../store/room";
