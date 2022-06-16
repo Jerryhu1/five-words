@@ -41,7 +41,7 @@ const WordCard: React.FC<Props> = () => {
       {isExplainer && (
         <button
           className="bg-purple-300 rounded w-max p-2 text-white self-center"
-          onClick={_ => submit()}
+          onClick={submit}
         >
           Submit
         </button>

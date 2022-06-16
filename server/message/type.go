@@ -7,6 +7,8 @@ const (
 	StartRound      = "START_ROUND"
 	SendMessage     = "SEND_MESSAGE"
 	JoinRoom        = "JOIN_ROOM"
+	RestartGame     = "RESTART_GAME"
+	ToLobby         = "TO_LOBBY"
 )
 
 type JoinRoomBody struct {
@@ -50,4 +52,12 @@ type SendMessageBody struct {
 	Text       string `json:"text"`
 	PlayerName string `json:"playerName"`
 	PlayerID   string `json:"playerID"`
+}
+
+type RestartGameBody struct {
+	RoomBody
+}
+
+type ToLobbyBody struct {
+	RoomBody
 }

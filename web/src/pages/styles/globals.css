@@ -11,6 +11,7 @@ body {
   );
   color: white;
   font-family: "Quicksand", "Roboto", "Segoe UI", sans-serif;
+  height: 100vh;
 }
 
 .btn-primary {
@@ -28,6 +29,7 @@ body {
 .bg-red-team {
   background-color: rgba(168, 17, 17, 0.52);
 }
+
 
 .bg-purple {
   background-color: #4901be;

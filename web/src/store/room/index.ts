@@ -23,6 +23,7 @@ export interface RoomState {
   started: boolean;
   state: State;
   currExplainer: string;
+  winnerTeam: string;
 }
 
 export type PlayerMap = { [key: string]: Player };
@@ -45,6 +46,7 @@ const initialState: RoomState = {
   started: false,
   state: State.LOBBY_STANDBY,
   currExplainer: "",
+  winnerTeam: "",
 };
 
 export const roomSlice = createSlice({

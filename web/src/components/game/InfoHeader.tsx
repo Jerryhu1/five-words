@@ -35,7 +35,7 @@ const InfoHeader = () => {
     if (timer !== 0) {
       return (
         <h3 className="text-4xl font-bold">
-          It's
+          It's {" "}
           <span className="uppercase">
             {!currExplainer ? null : currExplainer}
           </span>

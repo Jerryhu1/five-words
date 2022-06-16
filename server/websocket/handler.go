@@ -59,15 +59,10 @@ func (h Handler) handle(m ReceiveMessage) error {
 			log.Println(err)
 			return nil
 		}
-		reply, err = h.roomSrv.SetTimer(payload.RoomName, payload.CountdownTime, state.RoundStarting)
+		reply, err = h.startTimer(payload.RoomName, payload.RoundTime, payload.CountdownTime)
 		if err != nil {
-			log.Println(err)
-			return nil
+			log.Fatal(err)
 		}
-		doneChan := make(chan int, 1)
-		// Initial countdown
-		go h.runTimer(payload.RoomName, websocket.TextMessage, doneChan)
-		go h.startGame(payload.RoomName, payload.RoundTime, doneChan)
 	case message.SendMessage:
 		payload := message.SendMessageBody{}
 		err = json.Unmarshal(m.Body, &payload)
@@ -85,6 +80,26 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			log.Fatal(err)
 		}
+	case message.RestartGame:
+		payload := message.RestartGameBody{}
+		err = json.Unmarshal(m.Body, &payload)
+		_, err := h.roomSrv.Reset(payload.RoomName)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// TODO: Persist countdown time in settings
+		reply, err = h.startTimer(payload.RoomName, reply.Settings.ScoreGoal, 3)
+		if err != nil {
+			log.Fatal(err)
+		}
+	case message.ToLobby:
+		payload := message.ToLobbyBody{}
+		err = json.Unmarshal(m.Body, &payload)
+		reply, err = h.roomSrv.Reset(payload.RoomName)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	err = h.broadcaster.BroadcastMessage(reply, websocket.TextMessage)
@@ -93,6 +108,18 @@ func (h Handler) handle(m ReceiveMessage) error {
 	}
 
 	return nil
+}
+
+func (h *Handler) startTimer(roomName string, roundTime int, countdownTime int) (state.RoomState, error) {
+	reply, err := h.roomSrv.SetTimer(roomName, countdownTime, state.RoundStarting)
+	if err != nil {
+		return state.RoomState{}, err
+	}
+	doneChan := make(chan int, 1)
+	// Initial countdown
+	go h.runTimer(roomName, websocket.TextMessage, doneChan)
+	go h.startRound(roomName, roundTime, doneChan)
+	return reply, nil
 }
 
 func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
@@ -118,7 +145,7 @@ func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
 
 // Function needs some refactoring
 // Round timer countdown
-func (h *Handler) startGame(roomName string, roundTime int, doneChan chan int) {
+func (h *Handler) startRound(roomName string, roundTime int, doneChan chan int) {
 	// Wait till initial timer is done
 	<-doneChan
 	// Set card
@@ -127,7 +154,7 @@ func (h *Handler) startGame(roomName string, roundTime int, doneChan chan int) {
 		log.Println(err)
 		return
 	}
-	// Start another timer that takes 30 seconds
+	// Start another timer that takes x seconds
 	reply, err = h.roomSrv.SetTimer(roomName, roundTime, state.RoundOngoing)
 	if err != nil {
 		log.Println(err)
@@ -150,6 +177,19 @@ func (h *Handler) startGame(roomName string, roundTime int, doneChan chan int) {
 	}
 	// Return that the timer is done
 	err = h.broadcaster.BroadcastTimerDoneMessage(room, websocket.TextMessage)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// Check if team has won
+	reply, err = h.roomSrv.CheckVictory(roomName)
+	if err != nil {
+		return
+	}
+
+	// Update client
+	err = h.broadcaster.BroadcastMessage(reply, websocket.TextMessage)
 	if err != nil {
 		log.Println(err)
 		return

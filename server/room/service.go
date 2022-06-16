@@ -25,8 +25,8 @@ type Service struct {
 }
 
 type CreateRoomParams struct {
-	PlayerName string `json:"player_name"`
-	ScoreGoal  int    `json:"score_goal"`
+	PlayerName string `json:"playerName"`
+	ScoreGoal  int    `json:"scoreGoal"`
 	Language   string `json:"language"`
 }
 
@@ -300,6 +300,38 @@ func (s *Service) CheckWord(playerID string, roomName string, word string) (stat
 	s.card.CheckWord(roomState.CurrentCard, word)
 
 	updateScore(&roomState)
+
+	return s.store.SetRoomState(roomState)
+}
+
+func (s *Service) Reset(roomName string) (state.RoomState, error) {
+	roomState, err := s.GetByName(roomName)
+	if err != nil {
+		return state.RoomState{}, fmt.Errorf("%w, %v", ErrNotFound, err)
+	}
+
+	for _, v := range roomState.Teams {
+		v.Score = 0
+	}
+	roomState.State = state.LobbyStandby
+	roomState.Started = false
+	roomState.WinnerTeam = ""
+
+	return s.store.SetRoomState(roomState)
+}
+
+func (s *Service) CheckVictory(roomName string) (state.RoomState, error) {
+	roomState, err := s.GetByName(roomName)
+	if err != nil {
+		return state.RoomState{}, fmt.Errorf("%w, %v", ErrNotFound, err)
+	}
+
+	for _, v := range roomState.Teams {
+		if v.Score == roomState.ScoreGoal {
+			roomState.WinnerTeam = v.Name
+			break
+		}
+	}
 
 	return s.store.SetRoomState(roomState)
 }

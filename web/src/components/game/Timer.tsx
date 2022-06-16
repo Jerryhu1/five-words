@@ -1,27 +1,29 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { AppState } from "../..";
+import {useSelector} from "react-redux";
+import {AppState} from "../..";
 
 type Props = {
   onTimeUp?: () => void;
-  currTime?: number;
-  maxTime?: number;
-  started?: boolean;
+  show: boolean;
+  seconds: number;
 };
 
-const Timer: React.FC<Props> = ({ onTimeUp }) => {
-  const currTime = useSelector((state: AppState) => state.room.timer);
+const Timer = ({onTimeUp, show, seconds}: Props) => {
   React.useEffect(() => {
-    if (currTime === 0) {
+    if (seconds === 0) {
       if (onTimeUp) {
         onTimeUp();
       }
     }
-  }, [onTimeUp, currTime]);
+  }, [onTimeUp, seconds]);
+
   return (
-    <div>
-      <h1 className="text-6xl font-bold">{currTime}</h1>
-    </div>
+    <>
+      {show && (
+        <div>
+          <h1 className="text-6xl font-bold">{seconds}</h1>
+        </div>
+      )} </>
   );
 };
 

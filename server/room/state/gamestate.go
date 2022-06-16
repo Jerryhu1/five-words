@@ -15,6 +15,7 @@ type RoomState struct {
 	State         State              `json:"state"`
 	CurrExplainer string             `json:"currExplainer"`
 	Settings      Settings           `json:"settings"`
+	WinnerTeam    string             `json:"winnerTeam"`
 }
 
 type State string

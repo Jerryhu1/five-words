@@ -39,12 +39,12 @@ const Create = () => {
   };
 
   return (
-    <div>
+    <div className="flex p-20 justify-center">
       {showPlayerForm ? (
         <PlayerForm onSubmit={onSubmitPlayerForm}/>
       ) : (
-        <div>
-          Player: {activePlayer}
+        <div className="flex flex-col items-center">
+            <h1 className="text-2xl mb-10">Your name: {activePlayer}</h1>
           <RoomForm onSubmit={onSubmitRoomForm}/>
         </div>
       )}

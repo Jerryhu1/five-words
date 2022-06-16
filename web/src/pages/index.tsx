@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Home = () => {
   return (
-    <div className="flex justify-center p-10">
+    <div className="flex justify-center p-10 h-screen">
       <div className="flex flex-col justify-center w-1/2 xs:w-full text-center">
         <h1 className="text-6xl font-bold mb-10">Five words</h1>
         <div className="flex justify-between">

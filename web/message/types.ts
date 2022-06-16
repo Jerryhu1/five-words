@@ -1,4 +1,4 @@
-import { RoomState } from "../src/store/room";
+import {RoomState} from "../src/store/room";
 
 export enum SendMessageType {
   CREATE_ROOM = "CREATE_ROOM",
@@ -11,6 +11,8 @@ export enum SendMessageType {
   START_ROUND = "START_ROUND",
   JOIN_ROOM = "JOIN_ROOM",
   SEND_MESSAGE = "SEND_MESSAGE",
+  RESTART_GAME = "RESTART_GAME",
+  TO_LOBBY = "TO_LOBBY",
 }
 
 type AddPlayerToRoomPayload = {
@@ -52,6 +54,24 @@ type ChatMessageBody = {
   text: string;
 };
 
+type RestartGameBody = {
+  roomName: string;
+}
+
+type ToLobbyBody = {
+  roomName: string;
+}
+
+const restartGame = (payload: RestartGameBody): RoomMessage => ({
+  type: SendMessageType.RESTART_GAME,
+  body: payload
+})
+
+const toLobby = (payload: ToLobbyBody): RoomMessage => ({
+  type: SendMessageType.TO_LOBBY,
+  body: payload
+})
+
 const addPlayerToRoom = (payload: AddPlayerToRoomPayload): RoomMessage => ({
   type: SendMessageType.ADD_PLAYER_TO_ROOM,
   body: payload,
@@ -92,6 +112,8 @@ export interface RoomMessage {
 }
 
 export {
+  restartGame,
+  toLobby,
   addTeamPlayer,
   addPlayerToRoom,
   setRoom,
