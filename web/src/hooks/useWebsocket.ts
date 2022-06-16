@@ -1,14 +1,13 @@
 import useWs from "react-use-websocket";
 
 export const getWsServerHost = () => {
-  const host = process.env.NEXT_PUBLIC_SERVER_HOST || "127.0.0.1:8080"
-  console.log(process.env.NEXT_PUBLIC_SERVER_HOST)
-  console.log(process.env.NODE_ENV)
+  const host = process.env.NEXT_PUBLIC_WEB_HOST || "127.0.0.1:3000"
+
   if (process.env.NODE_ENV === "production") {
-    return `wss://${host}`
+    return `wss://${host}/socket`
   }
 
-  return `ws://${host}`
+  return `ws://${host}/socket`
 }
 
 

@@ -8,6 +8,7 @@ import (
 	"github.com/jerryhu1/five-words/room"
 	"github.com/jerryhu1/five-words/room/redis"
 	ws "github.com/jerryhu1/five-words/websocket"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
@@ -23,6 +24,11 @@ var websocketSrv *ws.Service
 var roomSrv *room.Service
 
 func main() {
+	err := godotenv.Load(".env.local")
+	if err != nil {
+		fmt.Println("No local env file found, using defaults")
+	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"

@@ -24,6 +24,8 @@ debug.log
 
 /server/*.iml
 /server/five-words
+/server/.env.local
 
 web/node_modules
 web/.env
+

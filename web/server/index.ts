@@ -2,7 +2,7 @@ import express from "express";
 import next from "next";
 import {createProxyMiddleware} from "http-proxy-middleware";
 
-const host = process.env.SERVER_HOST || "127.0.0.1:8080"
+const host = process.env.SERVER_HOST || "http://localhost:8080"
 const isPro = process.env.NODE_ENV === "production",
   version = process.env.NEXT_PUBLIC_VERSION || "dev mode"
 
