@@ -37,7 +37,10 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Could not create redis store: %s", err))
 	}
-	roomSrv = room.NewService(store)
+	roomSrv, err = room.NewService(store)
+	if err != nil {
+		panic(fmt.Errorf("Could not create room service: %s", err))
+	}
 	websocketSrv = ws.New(roomSrv)
 	ctrl := api.NewCtrl(roomSrv)
 	r := mux.NewRouter()

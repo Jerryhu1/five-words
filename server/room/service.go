@@ -297,10 +297,12 @@ func (s *Service) CheckWord(playerID string, roomName string, word string) (stat
 		return roomState, nil
 	}
 
-	s.card.CheckWord(roomState.CurrentCard, word)
+	newCard, correct := card.CheckWord(*roomState.CurrentCard, word)
+	roomState.CurrentCard = &newCard
 
-	updateScore(&roomState)
-
+	if correct {
+		roomState.Teams[roomState.TeamTurn].Score += 1
+	}
 	return s.store.SetRoomState(roomState)
 }
 
@@ -334,16 +336,6 @@ func (s *Service) CheckVictory(roomName string) (state.RoomState, error) {
 	}
 
 	return s.store.SetRoomState(roomState)
-}
-
-func updateScore(roomState *state.RoomState) {
-	score := 0
-	for _, v := range roomState.CurrentCard.Words {
-		if v.Correct {
-			score++
-		}
-	}
-	roomState.Teams[roomState.TeamTurn].Score = score
 }
 
 func getTeamForPlayer(room state.RoomState, playerID string) (string, bool) {
@@ -421,10 +413,13 @@ func getNextStringInArray(curr string, arr []string) string {
 	return arr[index]
 }
 
-func NewService(store Store) *Service {
+func NewService(store Store) (*Service, error) {
 	h := haikunator.New()
 	h.TokenLength = 0
 	playerRoomMap := make(map[string]string)
-	cardSrv := card.NewService()
-	return &Service{store: store, nameGen: h, playerRoomMap: playerRoomMap, card: cardSrv}
+	cardSrv, err := card.NewService()
+	if err != nil {
+		return nil, err
+	}
+	return &Service{store: store, nameGen: h, playerRoomMap: playerRoomMap, card: cardSrv}, nil
 }
