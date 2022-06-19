@@ -16,7 +16,11 @@ type Broadcaster struct {
 func (b *Broadcaster) BroadcastMessage(roomState state.RoomState, messageType int) error {
 	partialCard := toPartialCardState(roomState)
 
-	for k, _ := range roomState.Players {
+	for k, v := range roomState.Players {
+		if !v.IsActive {
+			continue
+		}
+
 		conn, ok := b.connection.GetConnections()[k]
 		if !ok {
 			fmt.Printf("could not get connection with key: %s\n", k)
