@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jerryhu1/five-words/room"
+	"io"
 	"io/ioutil"
 	"net/http"
 )
@@ -34,7 +35,7 @@ func (ctrl *RoomController) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Content-Type", "application/json")
 
-	res, err := ioutil.ReadAll(r.Body)
+	res, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

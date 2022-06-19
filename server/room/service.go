@@ -25,9 +25,10 @@ type Service struct {
 }
 
 type CreateRoomParams struct {
-	PlayerName string `json:"playerName"`
-	ScoreGoal  int    `json:"scoreGoal"`
-	Language   string `json:"language"`
+	Owner     string `json:"owner"`
+	ScoreGoal int    `json:"scoreGoal"`
+	Language  string `json:"language"`
+	Teams     int    `json:"teams"`
 }
 
 type Store interface {
@@ -40,24 +41,23 @@ var (
 	ErrEmptyList = errors.New("could not get random object from empty list")
 )
 
+var teamNames = []string{"Blue", "Red", "Yellow", "Green"}
+
 func (s *Service) Create(params CreateRoomParams) (state.RoomState, error) {
+	teams := make(map[string]*state.Team, params.Teams)
+	for i := 0; i < params.Teams; i++ {
+		teams[teamNames[i]] = &state.Team{
+			ID:      guid.NewString(),
+			Name:    teamNames[i],
+			Players: []string{},
+		}
+	}
 	roomName := s.nameGen.Haikunate()
 	room := state.RoomState{
-		Name:    roomName,
-		Owner:   params.PlayerName,
-		Players: map[string]*state.Player{},
-		Teams: map[string]*state.Team{
-			"Blue": {
-				ID:      guid.NewString(),
-				Name:    "Blue",
-				Players: []string{},
-			},
-			"Red": {
-				ID:      guid.NewString(),
-				Name:    "Red",
-				Players: []string{},
-			},
-		},
+		Name:        roomName,
+		Owner:       params.Owner,
+		Players:     map[string]*state.Player{},
+		Teams:       teams,
 		ScoreGoal:   params.ScoreGoal,
 		TeamTurn:    "",
 		CurrentCard: nil,

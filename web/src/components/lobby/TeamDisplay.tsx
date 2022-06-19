@@ -9,7 +9,6 @@ const TeamDisplay = () => {
     (state: AppState) => state.session.sessionID
   );
   const teams = useAppSelector((state: AppState) => state.room.teams);
-  const roomName = useAppSelector((state: AppState) => state.room.name);
 
   return (
     <div className="flex w-full gap-8">
@@ -37,7 +36,7 @@ const TeamDisplay = () => {
       </div>
       <div className="w-3/4">
         <h2>Teams</h2>
-        <div className={`grid grid-cols-2 grid-rows-2`}>
+        <div className={`grid grid-cols-2 grid-rows-2 gap-4`}>
           {teams &&
             sessionID &&
             Object.values(teams).map(team => (

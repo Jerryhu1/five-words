@@ -1,13 +1,14 @@
 import React from "react";
 
 type Props = {
-  onSubmit: (scoreGoal: number, language: string) => void;
+  onSubmit: (scoreGoal: number, language: string, teams: number) => void;
 };
 
 const RoomForm = ({onSubmit}: Props) => {
-  const [scoreGoal, setScoreGoal] = React.useState(0);
+  const [scoreGoal, setScoreGoal] = React.useState(15);
+  const [teams, setTeams] = React.useState(2);
   // const [language, setLanguage] = React.useState("");
-
+  const canSubmit = scoreGoal > 0
   return (
     <div className="flex flex-col justify-center items-center gap-4">
       <h1 className="text-2xl">Room settings</h1>
@@ -20,6 +21,21 @@ const RoomForm = ({onSubmit}: Props) => {
           onChange={e => setScoreGoal(+e.target.value)}
         />
       </div>
+      <div className="flex items-center justify-center content-center gap-2">
+        <h1 className="text-xl">Number of teams</h1>
+        <input
+          className="text-black p-2 rounded-xl w-10 text-center"
+          type="number"
+          name="teams"
+          value={teams}
+          onChange={e => {
+            if (+e.target.value >= 2 && +e.target.value <= 4) {
+              setTeams(+e.target.value)
+            }
+          }}
+        />
+      </div>
+
       {/*Language:*/}
       {/*<input*/}
       {/*  name="name"*/}
@@ -30,8 +46,9 @@ const RoomForm = ({onSubmit}: Props) => {
       {/*/>*/}
       <button
         className="btn-primary"
+        disabled={!canSubmit}
         onClick={() => {
-          onSubmit(scoreGoal, "");
+          onSubmit(scoreGoal, "", teams);
         }}
       >
         Create

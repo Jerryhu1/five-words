@@ -54,7 +54,8 @@ const Room = () => {
       return <h1>Loading, please wait</h1>;
     }
     if (showPlayerForm) {
-      return <PlayerForm onSubmit={onPlayerFormSubmit} />;
+
+      return(<div className="mt-16"> <PlayerForm onSubmit={onPlayerFormSubmit} /> </div>)
     }
 
     return <Lobby />;

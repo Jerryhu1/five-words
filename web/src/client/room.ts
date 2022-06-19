@@ -15,11 +15,14 @@ class RoomClient {
   createRoom = (
     owner: string,
     scoreGoal: number,
-    lang: string
+    lang: string,
+    teams: number
   ): Promise<AxiosResponse<RoomState>> => {
     return this.http.post<RoomState>(`/room/create`, {
+      owner: owner,
       scoreGoal: scoreGoal,
       language: lang,
+      teams: teams
     });
   };
 

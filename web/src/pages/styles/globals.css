@@ -30,6 +30,14 @@ body {
   background-color: rgba(168, 17, 17, 0.52);
 }
 
+.bg-yellow-team {
+  background-color: rgba(250, 255, 17, 0.71);
+}
+
+.bg-green-team {
+  background-color: rgba(17, 168, 50, 0.52);
+}
+
 
 .bg-purple {
   background-color: #4901be;

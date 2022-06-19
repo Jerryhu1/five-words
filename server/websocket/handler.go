@@ -89,7 +89,7 @@ func (h Handler) handle(m ReceiveMessage) error {
 		}
 
 		// TODO: Persist countdown time in settings
-		reply, err = h.startTimer(payload.RoomName, reply.Settings.ScoreGoal, 3)
+		reply, err = h.startTimer(payload.RoomName, reply.Settings.ScoreGoal, 5)
 		if err != nil {
 			log.Fatal(err)
 		}

@@ -23,9 +23,9 @@ const Create = () => {
     setShowPlayerForm(false);
   };
 
-  const onSubmitRoomForm = async (scoreGoal: number, language: string) => {
+  const onSubmitRoomForm = async (scoreGoal: number, language: string, teams: number) => {
     // Register room in server, and update active room to response
-    const res = await RoomClient.createRoom(sessionID, scoreGoal, language);
+    const res = await RoomClient.createRoom(sessionID, scoreGoal, language, teams);
     dispatch(setRoom(res.data));
     sendMessage(
       joinRoom({
