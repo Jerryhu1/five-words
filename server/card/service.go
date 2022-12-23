@@ -1,29 +1,28 @@
 package card
 
 import (
+	"embed"
 	"encoding/json"
-	haikunator "github.com/atrox/haikunatorgo/v2"
-	"github.com/jerryhu1/five-words/util/slice"
 	"math/rand"
-	"os"
 	"strings"
+
+	"github.com/jerryhu1/five-words/util/slice"
 )
 
 type Service struct {
-	nameGen   *haikunator.Haikunator
-	wordStore []Word
+	words []Word
 }
 
-func (s *Service) GetRandomCard() Card {
+func (s Service) GetRandomCard() Card {
 	var card Card
 	var prev []int
 	for i := 0; i < 5; i++ {
-		idx := rand.Intn(len(s.wordStore))
-		for slice.Contains[int](prev, idx) {
-			idx = rand.Intn(len(s.wordStore))
+		idx := rand.Intn(len(s.words))
+		for slice.Contains(prev, idx) {
+			idx = rand.Intn(len(s.words))
 		}
 		prev = append(prev, idx)
-		card.Words = append(card.Words, s.wordStore[idx])
+		card.Words = append(card.Words, s.words[idx])
 	}
 
 	return card
@@ -45,19 +44,19 @@ type payload struct {
 	Words []string `json:"words"`
 }
 
-func NewService() (*Service, error) {
-	h := haikunator.New()
-	h.TokenLength = 0
-	file, err := os.ReadFile("./card/data/words-simply.json")
+var wordsFile embed.FS
+
+func NewService(wordsFilePath string) (Service, error) {
+	file, err := wordsFile.ReadFile(wordsFilePath)
 	if err != nil {
-		return nil, err
+		return Service{}, err
 	}
 
 	var payload payload
 
 	err = json.Unmarshal(file, &payload)
 	if err != nil {
-		return nil, err
+		return Service{}, err
 	}
 
 	words := make([]Word, 0, len(payload.Words))
@@ -65,5 +64,5 @@ func NewService() (*Service, error) {
 		words = append(words, Word{ID: "0", Text: w, Correct: false})
 	}
 
-	return &Service{nameGen: h, wordStore: words}, nil
+	return Service{words: words}, nil
 }

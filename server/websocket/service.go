@@ -3,53 +3,50 @@ package websocket
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/gorilla/websocket"
-	"github.com/jerryhu1/five-words/chat"
+	"github.com/jerryhu1/five-words/message"
 	"github.com/jerryhu1/five-words/room"
-	"github.com/jerryhu1/five-words/room/state"
-	"log"
 )
 
 type Service struct {
 	roomSrv     *room.Service
-	broadcaster Broadcaster
 	connection  *Connection
+	broadcaster Broadcaster
 	handler     Handler
 }
 
-type ClientRegisterMessage struct {
-	Type string `json:"type"`
-	Body string `json:"body"`
+// RegisterConnection caches the websocket connection based on a generated guid and sends the guid back to the client
+
+func (s *Service) RegisterConnection(conn *websocket.Conn) (string, error) {
+	id, err := s.connection.RegisterConnection(conn)
+	if err != nil {
+		return "", err
+	}
+
+	b, err := json.Marshal(id)
+	if err != nil {
+		return "", err
+	}
+
+	msg, err := json.Marshal(SendMessage{
+		Type: message.ClientRegistered,
+		Body: b,
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	err = conn.WriteMessage(websocket.TextMessage, msg)
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
 }
 
-type ReplyMessage struct {
-	Type string `json:"type"`
-}
-
-type UpdateStateMessage struct {
-	Type string          `json:"type"`
-	Body state.RoomState `json:"body"`
-}
-
-type ReceiveMessage struct {
-	SessionID string          `json:"sessionID"`
-	Type      string          `json:"type"`
-	Body      json.RawMessage `json:"body"`
-}
-
-type AddChatMessage struct {
-	Type string    `json:"type"`
-	Body chat.Chat `json:"body"`
-}
-
-type Session struct {
-	ID string `json:"session_id"`
-}
-
-func (s *Service) RegisterConnection(conn *websocket.Conn) string {
-	return s.connection.RegisterConnection(conn)
-}
-
+// CloseConnection closes the websocket connection by removing it from the cache and setting the player as inactive
 func (s *Service) CloseConnection(id string) error {
 	err := s.connection.CloseConnection(id)
 	if err != nil {
@@ -61,7 +58,7 @@ func (s *Service) CloseConnection(id string) error {
 		return fmt.Errorf("could not set player inactive: %s", id)
 	}
 
-	err = s.broadcaster.BroadcastMessage(newState, websocket.TextMessage)
+	err = s.broadcaster.BroadcastRoomUpdate(newState, websocket.TextMessage)
 	if err != nil {
 		return err
 	}
@@ -73,14 +70,12 @@ func (s *Service) CloseConnection(id string) error {
 func (s *Service) ReceiveMessage(conn *websocket.Conn) error {
 	_, p, err := conn.ReadMessage()
 	if err != nil {
-		log.Println(err)
-		return err
+		return fmt.Errorf("failed to read message, err: %v", err)
 	}
 
 	m := ReceiveMessage{}
 	err = json.Unmarshal(p, &m)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 

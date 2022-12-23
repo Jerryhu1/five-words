@@ -1,13 +1,15 @@
 package websocket
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
+	"sync"
+
 	"github.com/beevik/guid"
 	"github.com/gorilla/websocket"
-	"log"
-	"sync"
 )
+
+var ErrConnectionNotFound = errors.New("could not get connection")
 
 type Connection struct {
 	mu          sync.Mutex
@@ -18,29 +20,22 @@ func (s *Connection) GetConnections() map[string]*websocket.Conn {
 	return s.connections
 }
 
-func (s *Connection) RegisterConnection(conn *websocket.Conn) string {
+func (s *Connection) GetConnection(guid string) (*websocket.Conn, error) {
+	res, ok := s.connections[guid]
+	if !ok {
+		return nil, fmt.Errorf("%w, id: %s", ErrConnectionNotFound, guid)
+	}
+
+	return res, nil
+}
+
+func (s *Connection) RegisterConnection(conn *websocket.Conn) (string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	id := guid.NewString()
 	s.connections[id] = conn
-	fmt.Printf("Registered connection: %s\n", id)
-	msg, err := json.Marshal(ClientRegisterMessage{
-		Type: "CLIENT_REGISTERED",
-		Body: id,
-	})
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-
-	err = conn.WriteMessage(websocket.TextMessage, msg)
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-
-	return id
+	return id, nil
 }
 
 func (s *Connection) CloseConnection(id string) error {

@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/go-redis/redis"
 	"github.com/jerryhu1/five-words/room"
 	"github.com/jerryhu1/five-words/room/state"
-	"os"
-	"time"
 )
 
 type Store struct {
@@ -46,9 +46,8 @@ func (s *Store) SetRoomState(room state.RoomState) (state.RoomState, error) {
 	return s.GetRoomState(room.Name)
 }
 
-func NewStore() (room.Store, error) {
-	redisURL := os.Getenv("REDIS_URL")
-	opt, err := redis.ParseURL(redisURL)
+func NewStore(url string) (room.Store, error) {
+	opt, err := redis.ParseURL(url)
 	if err != nil {
 		return nil, err
 	}

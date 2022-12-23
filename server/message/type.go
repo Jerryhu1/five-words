@@ -1,19 +1,24 @@
 package message
 
+type MessageType string
+
 const (
-	AddTeamPlayer   = "ADD_TEAM_PLAYER"
-	AddPlayerToRoom = "ADD_PLAYER_TO_ROOM"
-	StartGame       = "START_GAME"
-	StartRound      = "START_ROUND"
-	SendMessage     = "SEND_MESSAGE"
-	JoinRoom        = "JOIN_ROOM"
-	RestartGame     = "RESTART_GAME"
-	ToLobby         = "TO_LOBBY"
+	ClientRegistered MessageType = "CLIENT_REGISTERED"
+	AddTeamPlayer    MessageType = "ADD_TEAM_PLAYER"
+	AddPlayerToRoom  MessageType = "ADD_PLAYER_TO_ROOM"
+	StartGame        MessageType = "START_GAME"
+	StartRound       MessageType = "START_ROUND"
+	SendMessage      MessageType = "SEND_MESSAGE"
+	JoinRoom         MessageType = "JOIN_ROOM"
+	RestartGame      MessageType = "RESTART_GAME"
+	ToLobby          MessageType = "TO_LOBBY"
+	SetRoom          MessageType = "SET_ROOM"
+	TimerFinished    MessageType = "TIMER_FINISHED"
+	AddMessage       MessageType = "ADD_MESSAGE"
 )
 
 type JoinRoomBody struct {
 	RoomBody
-	SessionID  string `json:"sessionID"`
 	PlayerName string `json:"playerName"`
 }
 
@@ -30,7 +35,6 @@ type AddTeamPlayerBody struct {
 type AddPlayerToRoomBody struct {
 	RoomBody
 	PlayerName string `json:"playerName"`
-	SessionID  string `json:"sessionID"`
 }
 
 type StartGameBody struct {

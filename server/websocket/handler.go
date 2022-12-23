@@ -3,95 +3,134 @@ package websocket
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/gorilla/websocket"
 	"github.com/jerryhu1/five-words/chat"
 	"github.com/jerryhu1/five-words/message"
 	"github.com/jerryhu1/five-words/room"
 	"github.com/jerryhu1/five-words/room/state"
-	"log"
-	"time"
 )
 
 type Handler struct {
-	roomSrv     *room.Service
+	roomSrv     service
 	broadcaster Broadcaster
+	handlers    map[message.MessageType]MessageHandler
+}
+
+type service interface {
+	Create(owner string, scoreGoal int, language string, teams int) (state.RoomState, error)
+	GetByName(name string) (state.RoomState, error)
+	AddPlayer(roomName string, sessionID string, playerName string) (state.RoomState, error)
+	SetPlayerTeam(roomName string, playerID string, newTeam string) (state.RoomState, error)
+	SetPlayerActive(playerID string, isActive bool) (state.RoomState, error)
+	IncrementScore(roomName string, teamName string, score int) (state.RoomState, error)
+	StartGame(roomName string) (state.RoomState, error)
+	StartRound(roomName string) (state.RoomState, error)
+	SetTimer(roomName string, newTime int, gameState state.State) (state.RoomState, error)
+	DecrementTimer(roomName string) (state.RoomState, error)
+	SetCard(roomName string) (state.RoomState, error)
+	CheckWord(playerID string, roomName string, word string) (state.RoomState, error)
+	Reset(roomName string) (state.RoomState, error)
+	CheckVictory(roomName string) (state.RoomState, error)
+}
+
+type MessageHandler interface {
+	Process(m ReceiveMessage) (*state.RoomState, error)
 }
 
 func (h Handler) handle(m ReceiveMessage) error {
 	var err error
 	var reply state.RoomState
 
-	switch m.Type {
+	switch message.MessageType(m.Type) {
 	case message.JoinRoom:
 		body := message.JoinRoomBody{}
-		err = json.Unmarshal(m.Body, &body)
-		reply, err = h.roomSrv.AddPlayerToRoom(body.RoomName, body.SessionID, body.PlayerName)
+		if err := json.Unmarshal(m.Body, &body); err != nil {
+			return err
+		}
+
+		reply, err = h.roomSrv.AddPlayer(body.RoomName, m.SessionID, body.PlayerName)
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 
 	case message.AddTeamPlayer:
-		payload := message.AddTeamPlayerBody{}
-		err = json.Unmarshal(m.Body, &payload)
-		reply, err = h.roomSrv.SetPlayerTeam(payload.RoomName, payload.PlayerID, payload.Team)
+		body := message.AddTeamPlayerBody{}
+		if err := json.Unmarshal(m.Body, &body); err != nil {
+			return err
+		}
+		reply, err = h.roomSrv.SetPlayerTeam(body.RoomName, body.PlayerID, body.Team)
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 	case message.AddPlayerToRoom:
-		payload := message.AddPlayerToRoomBody{}
-		err = json.Unmarshal(m.Body, &payload)
-		reply, err = h.roomSrv.AddPlayerToRoom(payload.RoomName, payload.SessionID, payload.PlayerName)
+		body := message.AddPlayerToRoomBody{}
+		if err := json.Unmarshal(m.Body, &body); err != nil {
+			return err
+		}
+		reply, err = h.roomSrv.AddPlayer(body.RoomName, m.SessionID, body.PlayerName)
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 	case message.StartGame:
-		payload := message.StartGameBody{}
-		err = json.Unmarshal(m.Body, &payload)
-		reply, err = h.roomSrv.StartGame(payload.RoomName)
+		body := message.StartGameBody{}
+		if err := json.Unmarshal(m.Body, &body); err != nil {
+			return err
+		}
+		reply, err = h.roomSrv.StartGame(body.RoomName)
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 	case message.StartRound:
-		payload := message.StartRoundBody{}
-		err = json.Unmarshal(m.Body, &payload)
-		_, err := h.roomSrv.StartRound(payload.RoomName)
-		if err != nil {
-			log.Println(err)
-			return nil
+		body := message.StartRoundBody{}
+		if err := json.Unmarshal(m.Body, &body); err != nil {
+			return err
 		}
-		reply, err = h.startTimer(payload.RoomName, payload.RoundTime, payload.CountdownTime)
+
+		_, err := h.roomSrv.StartRound(body.RoomName)
 		if err != nil {
-			log.Fatal(err)
+			return err
+		}
+
+		reply, err = h.startTimer(body.RoomName, body.RoundTime, body.CountdownTime)
+		if err != nil {
+			return err
 		}
 	case message.SendMessage:
-		payload := message.SendMessageBody{}
-		err = json.Unmarshal(m.Body, &payload)
-		reply, err = h.roomSrv.CheckWord(payload.PlayerID, payload.RoomName, payload.Text)
-		if err != nil {
-			log.Fatal(err)
+		body := message.SendMessageBody{}
+		if err := json.Unmarshal(m.Body, &body); err != nil {
+			return err
 		}
+
+		reply, err = h.roomSrv.CheckWord(body.PlayerID, body.RoomName, body.Text)
+		if err != nil {
+			return err
+		}
+
 		//TODO: give flag for when a message contains a correct answer
 		err = h.broadcaster.BroadcastChatMessage(reply, chat.Chat{
 			Timestamp:  time.Now(),
-			Text:       payload.Text,
-			PlayerID:   payload.PlayerID,
-			PlayerName: payload.PlayerName,
+			Text:       body.Text,
+			PlayerID:   body.PlayerID,
+			PlayerName: body.PlayerName,
 		})
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	case message.RestartGame:
 		payload := message.RestartGameBody{}
 		err = json.Unmarshal(m.Body, &payload)
 		_, err := h.roomSrv.Reset(payload.RoomName)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		// TODO: Persist countdown time in settings
 		reply, err = h.startTimer(payload.RoomName, reply.Settings.ScoreGoal, 5)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	case message.ToLobby:
 		payload := message.ToLobbyBody{}
@@ -102,7 +141,7 @@ func (h Handler) handle(m ReceiveMessage) error {
 		}
 	}
 
-	err = h.broadcaster.BroadcastMessage(reply, websocket.TextMessage)
+	err = h.broadcaster.BroadcastRoomUpdate(reply, websocket.TextMessage)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -115,7 +154,7 @@ func (h *Handler) startTimer(roomName string, roundTime int, countdownTime int) 
 	if err != nil {
 		return state.RoomState{}, err
 	}
-	doneChan := make(chan int, 1)
+	doneChan := make(chan bool, 1)
 	// Initial countdown
 	go h.runTimer(roomName, websocket.TextMessage, doneChan)
 	go h.startRound(roomName, roundTime, doneChan)
@@ -132,7 +171,7 @@ func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
 		}
 		err = h.broadcaster.BroadcastMessage(newState, messageType)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			break
 		}
 
@@ -145,7 +184,7 @@ func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
 
 // Function needs some refactoring
 // Round timer countdown
-func (h *Handler) startRound(roomName string, roundTime int, doneChan chan int) {
+func (h *Handler) startRound(roomName string, roundTime int, doneChan chan bool) {
 	// Wait till initial timer is done
 	<-doneChan
 	// Set card
@@ -161,7 +200,7 @@ func (h *Handler) startRound(roomName string, roundTime int, doneChan chan int) 
 		return
 	}
 	// Update client
-	err = h.broadcaster.BroadcastMessage(reply, websocket.TextMessage)
+	err = h.broadcaster.BroadcastRoomUpdate(reply, websocket.TextMessage)
 	if err != nil {
 		log.Println(err)
 		return
@@ -176,7 +215,7 @@ func (h *Handler) startRound(roomName string, roundTime int, doneChan chan int) 
 		return
 	}
 	// Return that the timer is done
-	err = h.broadcaster.BroadcastTimerDoneMessage(room, websocket.TextMessage)
+	err = h.broadcaster.BroadcastTimerDoneMessage(room)
 	if err != nil {
 		log.Println(err)
 		return
@@ -189,7 +228,7 @@ func (h *Handler) startRound(roomName string, roundTime int, doneChan chan int) 
 	}
 
 	// Update client
-	err = h.broadcaster.BroadcastMessage(reply, websocket.TextMessage)
+	err = h.broadcaster.BroadcastRoomUpdate(reply, websocket.TextMessage)
 	if err != nil {
 		log.Println(err)
 		return

@@ -1,16 +1,15 @@
 package room
 
 import (
+	"reflect"
+	"sync"
+	"testing"
+
 	haikunator "github.com/atrox/haikunatorgo/v2"
 	"github.com/jerryhu1/five-words/card"
 	"github.com/jerryhu1/five-words/room/state"
 	"github.com/stretchr/testify/assert"
-	"reflect"
-	"sync"
-	"testing"
 )
-
-var rs = mockRoomState()
 
 func TestService_AddPlayerToRoom(t *testing.T) {
 	type args struct {
@@ -55,7 +54,7 @@ func TestService_AddPlayerToRoom(t *testing.T) {
 	s := mockService()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := s.AddPlayerToRoom(tt.args.roomName, tt.args.sessionID, tt.args.playerName)
+			got, err := s.AddPlayer(tt.args.roomName, tt.args.sessionID, tt.args.playerName)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AddPlayerToRoom() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -98,7 +97,7 @@ func TestService_CheckWord(t *testing.T) {
 	s := mockService()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := s.CheckWord(tt.args.roomName, tt.args.word)
+			got, err := s.CheckWord("test", tt.args.roomName, tt.args.word)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CheckWord() error = %v, wantErr %v", err, tt.wantErr)
@@ -111,11 +110,11 @@ func TestService_CheckWord(t *testing.T) {
 }
 
 func stateEqual(t *testing.T, want state.RoomState, got state.RoomState) {
-	for k, _ := range want.Teams {
+	for k := range want.Teams {
 		assert.Equal(t, want.Teams[k], got.Teams[k])
 	}
 
-	for k, _ := range want.Players {
+	for k := range want.Players {
 		assert.Equal(t, want.Players[k], got.Players[k])
 	}
 
@@ -139,8 +138,12 @@ func TestService_Create(t *testing.T) {
 		playerRoomMap map[string]string
 	}
 	type args struct {
-		params CreateRoomParams
+		owner     string
+		scoreGoal int
+		language  string
+		numTeams  int
 	}
+
 	tests := []struct {
 		name    string
 		fields  fields
@@ -159,7 +162,7 @@ func TestService_Create(t *testing.T) {
 				mu:            tt.fields.mu,
 				playerRoomMap: tt.fields.playerRoomMap,
 			}
-			got, err := s.Create(tt.args.params)
+			got, err := s.Create(tt.args.owner, tt.args.scoreGoal, tt.args.language, tt.args.numTeams)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
 				return

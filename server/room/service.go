@@ -3,6 +3,7 @@ package room
 import (
 	"errors"
 	"fmt"
+
 	"github.com/jerryhu1/five-words/card"
 	"github.com/jerryhu1/five-words/player"
 	"github.com/jerryhu1/five-words/room/state"
@@ -24,13 +25,6 @@ type Service struct {
 	playerRoomMap map[string]string
 }
 
-type CreateRoomParams struct {
-	Owner     string `json:"owner"`
-	ScoreGoal int    `json:"scoreGoal"`
-	Language  string `json:"language"`
-	Teams     int    `json:"teams"`
-}
-
 type Store interface {
 	GetRoomState(name string) (state.RoomState, error)
 	SetRoomState(room state.RoomState) (state.RoomState, error)
@@ -43,9 +37,17 @@ var (
 
 var teamNames = []string{"Blue", "Red", "Yellow", "Green"}
 
-func (s *Service) Create(params CreateRoomParams) (state.RoomState, error) {
-	teams := make(map[string]*state.Team, params.Teams)
-	for i := 0; i < params.Teams; i++ {
+func NewService(cardService card.Service, store Store) (*Service, error) {
+	h := haikunator.New()
+	h.TokenLength = 0
+	// TODO; store player room mapping in redis
+	playerRoomMap := make(map[string]string)
+	return &Service{store: store, nameGen: h, playerRoomMap: playerRoomMap, card: &cardService}, nil
+}
+
+func (s *Service) Create(owner string, scoreGoal int, language string, numTeams int) (state.RoomState, error) {
+	teams := make(map[string]*state.Team, numTeams)
+	for i := 0; i < numTeams; i++ {
 		teams[teamNames[i]] = &state.Team{
 			ID:      guid.NewString(),
 			Name:    teamNames[i],
@@ -55,13 +57,13 @@ func (s *Service) Create(params CreateRoomParams) (state.RoomState, error) {
 	roomName := s.nameGen.Haikunate()
 	room := state.RoomState{
 		Name:        roomName,
-		Owner:       params.Owner,
+		Owner:       owner,
 		Players:     map[string]*state.Player{},
 		Teams:       teams,
-		ScoreGoal:   params.ScoreGoal,
+		ScoreGoal:   scoreGoal,
 		TeamTurn:    "",
 		CurrentCard: nil,
-		Settings:    state.Settings{Language: params.Language},
+		Settings:    state.Settings{Language: language},
 	}
 
 	res, err := s.store.SetRoomState(room)
@@ -81,7 +83,7 @@ func (s *Service) GetByName(name string) (state.RoomState, error) {
 	return res, nil
 }
 
-func (s *Service) AddPlayerToRoom(roomName string, sessionID string, playerName string) (state.RoomState, error) {
+func (s *Service) AddPlayer(roomName string, sessionID string, playerName string) (state.RoomState, error) {
 	res, err := s.store.GetRoomState(roomName)
 	if err != nil {
 		return state.RoomState{}, err
@@ -212,6 +214,10 @@ func (s *Service) StartRound(roomName string) (state.RoomState, error) {
 
 	oldState.TeamTurn = nextTeamID
 	nextPlayer, err := selectRandomPlayer(nextTeam.Players)
+	if err != nil {
+		return state.RoomState{}, err
+	}
+
 	if nextTeam.CurrExplainer == "" {
 		oldState.Teams[nextTeamID].CurrExplainer = nextPlayer
 	} else {
@@ -289,7 +295,7 @@ func (s *Service) CheckWord(playerID string, roomName string, word string) (stat
 
 	playersInTeam := roomState.Teams[roomState.TeamTurn].Players
 	// Only players in own team, exlucing the explainer
-	if !slice.Contains[string](playersInTeam, playerID) || roomState.CurrExplainer == playerID {
+	if !slice.Contains(playersInTeam, playerID) || roomState.CurrExplainer == playerID {
 		return roomState, nil
 	}
 
@@ -411,15 +417,4 @@ func getNextStringInArray(curr string, arr []string) string {
 	}
 
 	return arr[index]
-}
-
-func NewService(store Store) (*Service, error) {
-	h := haikunator.New()
-	h.TokenLength = 0
-	playerRoomMap := make(map[string]string)
-	cardSrv, err := card.NewService()
-	if err != nil {
-		return nil, err
-	}
-	return &Service{store: store, nameGen: h, playerRoomMap: playerRoomMap, card: cardSrv}, nil
 }
