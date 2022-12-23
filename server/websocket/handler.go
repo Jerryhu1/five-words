@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -12,12 +11,6 @@ import (
 	"github.com/jerryhu1/five-words/room"
 	"github.com/jerryhu1/five-words/room/state"
 )
-
-type Handler struct {
-	roomSrv     service
-	broadcaster Broadcaster
-	handlers    map[message.MessageType]MessageHandler
-}
 
 type service interface {
 	Create(owner string, scoreGoal int, language string, teams int) (state.RoomState, error)
@@ -36,8 +29,16 @@ type service interface {
 	CheckVictory(roomName string) (state.RoomState, error)
 }
 
-type MessageHandler interface {
-	Process(m ReceiveMessage) (*state.RoomState, error)
+type Handler struct {
+	roomSrv     service
+	broadcaster Broadcaster
+}
+
+func NewHandler(r *room.Service, broadcaster Broadcaster) Handler {
+	return Handler{
+		roomSrv:     r,
+		broadcaster: broadcaster,
+	}
 }
 
 func (h Handler) handle(m ReceiveMessage) error {
@@ -65,6 +66,7 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+
 	case message.AddPlayerToRoom:
 		body := message.AddPlayerToRoomBody{}
 		if err := json.Unmarshal(m.Body, &body); err != nil {
@@ -74,6 +76,7 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+
 	case message.StartGame:
 		body := message.StartGameBody{}
 		if err := json.Unmarshal(m.Body, &body); err != nil {
@@ -83,6 +86,7 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+
 	case message.StartRound:
 		body := message.StartRoundBody{}
 		if err := json.Unmarshal(m.Body, &body); err != nil {
@@ -98,6 +102,7 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+
 	case message.SendMessage:
 		body := message.SendMessageBody{}
 		if err := json.Unmarshal(m.Body, &body); err != nil {
@@ -119,9 +124,14 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+
 	case message.RestartGame:
 		payload := message.RestartGameBody{}
 		err = json.Unmarshal(m.Body, &payload)
+		if err != nil {
+			return err
+		}
+
 		_, err := h.roomSrv.Reset(payload.RoomName)
 		if err != nil {
 			return err
@@ -132,21 +142,21 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+
 	case message.ToLobby:
 		payload := message.ToLobbyBody{}
 		err = json.Unmarshal(m.Body, &payload)
+		if err != nil {
+			return err
+		}
+
 		reply, err = h.roomSrv.Reset(payload.RoomName)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
-	err = h.broadcaster.BroadcastRoomUpdate(reply, websocket.TextMessage)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return nil
+	return h.broadcaster.BroadcastRoomUpdate(reply, websocket.TextMessage)
 }
 
 func (h *Handler) startTimer(roomName string, roundTime int, countdownTime int) (state.RoomState, error) {
@@ -154,14 +164,14 @@ func (h *Handler) startTimer(roomName string, roundTime int, countdownTime int) 
 	if err != nil {
 		return state.RoomState{}, err
 	}
-	doneChan := make(chan bool, 1)
+	doneChan := make(chan struct{}, 1)
 	// Initial countdown
 	go h.runTimer(roomName, websocket.TextMessage, doneChan)
 	go h.startRound(roomName, roundTime, doneChan)
 	return reply, nil
 }
 
-func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
+func (h *Handler) runTimer(roomName string, messageType int, doneChan chan struct{}) {
 	for {
 		time.Sleep(time.Second)
 		newState, err := h.roomSrv.DecrementTimer(roomName)
@@ -169,14 +179,14 @@ func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
 			log.Println(err)
 			break
 		}
-		err = h.broadcaster.BroadcastMessage(newState, messageType)
+		err = h.broadcaster.BroadcastRoomUpdate(newState, messageType)
 		if err != nil {
 			log.Println(err)
 			break
 		}
 
 		if newState.Timer == 0 {
-			resChan <- 0
+			doneChan <- struct{}{}
 			break
 		}
 	}
@@ -184,7 +194,7 @@ func (h *Handler) runTimer(roomName string, messageType int, resChan chan int) {
 
 // Function needs some refactoring
 // Round timer countdown
-func (h *Handler) startRound(roomName string, roundTime int, doneChan chan bool) {
+func (h *Handler) startRound(roomName string, roundTime int, doneChan chan struct{}) {
 	// Wait till initial timer is done
 	<-doneChan
 	// Set card
@@ -232,12 +242,5 @@ func (h *Handler) startRound(roomName string, roundTime int, doneChan chan bool)
 	if err != nil {
 		log.Println(err)
 		return
-	}
-}
-
-func NewHandler(r *room.Service, broadcaster Broadcaster) Handler {
-	return Handler{
-		roomSrv:     r,
-		broadcaster: broadcaster,
 	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -14,7 +15,6 @@ import (
 	"github.com/gorilla/websocket"
 	server "github.com/jerryhu1/five-words/http"
 	"github.com/jerryhu1/five-words/message"
-	"github.com/jerryhu1/five-words/room"
 	"github.com/jerryhu1/five-words/room/state"
 	ws "github.com/jerryhu1/five-words/websocket"
 	"github.com/joho/godotenv"
@@ -22,7 +22,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	err := SetupEnv()
+	err := setupEnv()
 	if err != nil {
 		log.Println(err)
 		return
@@ -44,13 +44,13 @@ func TestAddTeamPlayer(t *testing.T) {
 		t.FailNow()
 	}
 	defer conn.Close()
-	registeredMsg, err := registerClient(conn)
+	sessionID, err := registerClient(conn)
 	if err != nil {
 		log.Println(err)
 		t.FailNow()
 	}
 
-	_, err = joinRoom(resRoom.Name, registeredMsg.Body, "Jerry", conn)
+	_, err = joinRoom(resRoom.Name, sessionID, "Jerry", conn)
 	if err != nil {
 		t.FailNow()
 	}
@@ -59,7 +59,7 @@ func TestAddTeamPlayer(t *testing.T) {
 		RoomBody: message.RoomBody{
 			RoomName: resRoom.Name,
 		},
-		PlayerID: registeredMsg.Body,
+		PlayerID: sessionID,
 		Team:     "Blue",
 	})
 
@@ -69,7 +69,7 @@ func TestAddTeamPlayer(t *testing.T) {
 
 	}
 
-	var reply ws.UpdateStateMessage
+	var reply ws.ReceiveMessage
 	err = json.Unmarshal(msg, &reply)
 
 }
@@ -94,41 +94,55 @@ func TestAddPlayerToRoom(t *testing.T) {
 		t.FailNow()
 	}
 
-	conn, err := setupWsClient()
-	if err != nil {
-		log.Println(err)
-		t.FailNow()
-	}
-	defer conn.Close()
-	registeredMsg, err := registerClient(conn)
-	if err != nil {
-		log.Println(err)
-		t.FailNow()
-	}
+	users := []string{"Jerry", "Tom", "John", "Doe"}
 
-	assert.Equal(t, registeredMsg.Type, "CLIENT_REGISTERED")
-	assert.NotNil(t, registeredMsg.Body)
+	for _, u := range users {
+		conn, err := setupWsClient()
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		defer conn.Close()
+		sessionID, err := registerClient(conn)
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
 
-	res, err := joinRoom(resRoom.Name, registeredMsg.Body, "Jerry", conn)
-	if err != nil {
-		t.FailNow()
+		assert.NotNil(t, sessionID)
+
+		res, err := joinRoom(resRoom.Name, sessionID, u, conn)
+		if err != nil {
+			t.FailNow()
+		}
+
+		assert.Equal(t, res.Players[sessionID].Name, u)
 	}
-
-	assert.Equal(t, res.Players[registeredMsg.Body].Name, "Jerry")
 }
 
-func registerClient(conn *websocket.Conn) (ws.ClientRegisterMessage, error) {
+func registerClient(conn *websocket.Conn) (string, error) {
 	_, msg, err := conn.ReadMessage()
 	if err != nil {
-		return ws.ClientRegisterMessage{}, err
+		return "", err
 	}
-	var registeredMsg ws.ClientRegisterMessage
+	var registeredMsg ws.ReceiveMessage
 	err = json.Unmarshal(msg, &registeredMsg)
 	if err != nil {
-		return ws.ClientRegisterMessage{}, err
+		return "", err
 	}
 
-	return registeredMsg, nil
+	if registeredMsg.Type != string(message.ClientRegistered) {
+		return "", fmt.Errorf("message is not of type %s", message.ClientRegistered)
+	}
+
+	var sessionID string
+
+	err = json.Unmarshal(registeredMsg.Body, &sessionID)
+	if err != nil {
+		return "", err
+	}
+
+	return sessionID, nil
 }
 
 func joinRoom(roomName string, sessionID string, playerName string, conn *websocket.Conn) (state.RoomState, error) {
@@ -159,17 +173,11 @@ func joinRoom(roomName string, sessionID string, playerName string, conn *websoc
 		return state.RoomState{}, err
 	}
 
-	var reply ws.UpdateStateMessage
-	err = json.Unmarshal(msg, &reply)
-	if err != nil {
-		return state.RoomState{}, err
-	}
-
-	return reply.Body, nil
+	return unmarshalMessageToBody[state.RoomState](msg)
 }
 
 func createRoom() (state.RoomState, error) {
-	payload := room.CreateRoomParams{
+	payload := server.CreateRoomParams{
 		Owner:     "Jerry",
 		ScoreGoal: 30,
 		Language:  "en",
@@ -210,7 +218,7 @@ func setupWsClient() (*websocket.Conn, error) {
 	return c, nil
 }
 
-func SetupEnv() error {
+func setupEnv() error {
 	err := godotenv.Load("../.env.local")
 	if err != nil {
 		log.Println("No local env file found, using defaults")
@@ -225,4 +233,18 @@ func SetupEnv() error {
 	}()
 	time.Sleep(time.Second * 2)
 	return nil
+}
+
+// unmarshalBody unmarshalls a json message to a concrete type T
+func unmarshalMessageToBody[T any](msg []byte) (T, error) {
+	var receive ws.SendMessage
+	err := json.Unmarshal(msg, &receive)
+
+	var res T
+	err = json.Unmarshal(receive.Body, &res)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
 }

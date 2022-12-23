@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jerryhu1/five-words/card"
 	"github.com/jerryhu1/five-words/room"
-	api "github.com/jerryhu1/five-words/room/http"
 	redis "github.com/jerryhu1/five-words/room/store"
 	ws "github.com/jerryhu1/five-words/websocket"
 )
@@ -37,7 +36,7 @@ func Setup(port string, redisURL string, wordsPath string) error {
 	}
 
 	websocketSrv = ws.New(roomSrv)
-	ctrl := api.NewController(roomSrv)
+	ctrl := NewController(roomSrv)
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", upgrade)
