@@ -46,13 +46,15 @@ func (s *Store) SetRoomState(room state.RoomState) (state.RoomState, error) {
 	return s.GetRoomState(room.Name)
 }
 
-func NewStore(url string) (room.Store, error) {
-	opt, err := redis.ParseURL(url)
-	if err != nil {
-		return nil, err
-	}
+func NewStore(host string, port string, username string, password string) (room.Store, error) {
+	redisClient := redis.NewClient(
+		&redis.Options{
+			Addr:     fmt.Sprintf("%s:%s", host, port),
+			Password: password,
+			DB:       0,
+		},
+	)
 
-	redisClient := redis.NewClient(opt)
 	pong, err := redisClient.Ping().Result()
 	if err != nil {
 		fmt.Println(pong, err)

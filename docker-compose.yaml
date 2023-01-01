@@ -7,3 +7,27 @@ services:
       - REDIS_REPLICATION_MODE=master
     ports:
       - "6379:6379"
+  server:
+    depends_on:
+      - redis
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      REDIS_HOST: "redis"
+      REDIS_USER: 
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: p4ssw0rd 
+    ports:
+      - '8080:8080'
+  web:
+    depends_on:
+      - server
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    environment:
+      SERVER_HOST: http://server:8080
+      NEXT_PUBLIC_WEB_HOST: ws://localhost:3000
+    ports:
+      - '3000:3000'

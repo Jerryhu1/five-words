@@ -2,22 +2,13 @@ import useWs from "react-use-websocket";
 import { RoomMessage } from "../../message/types";
 import { useAppSelector } from "../store/hooks";
 
-export const getWsServerHost = () => {
-  const host = process.env.NEXT_PUBLIC_WEB_HOST || "127.0.0.1:3000"
-
-  if (process.env.NODE_ENV === "production") {
-    return `wss://${host}/socket`
-  }
-
-  return `ws://${host}/socket`
-}
-
+const host = process.env.NEXT_PUBLIC_WEB_HOST || "ws://127.0.0.1:3000/socket"
 
 const useWebSocket = (connect: boolean) => {
   const { sessionID } = useAppSelector(state => state.session);
 
   const { lastMessage, readyState, sendMessage } = useWs(
-    getWsServerHost(),
+    host,
     { share: true },
     connect
   );

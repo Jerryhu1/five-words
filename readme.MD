@@ -12,8 +12,7 @@ The game is created using the following:
 
 Backend:
 * Go 
-* Redis for saving room state
-* Postgres for saving words
+* Redis
 
 Frontend:
 * React

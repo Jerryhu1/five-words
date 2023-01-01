@@ -6,8 +6,6 @@
     "dev": "nodemon --exec ts-node --project tsconfig.server.json server",
     "build": "next build && npx swc ./server -d .next/server --config-file .swcrc",
     "test": "jest --detectOpenHandles --forceExit",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public",
     "heroku-posbuild": "npm run build",
     "start": "node .next/server"
   },

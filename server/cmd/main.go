@@ -20,12 +20,11 @@ func main() {
 		port = "8080"
 	}
 
-	redisURL := os.Getenv("REDIS_URL")
-	if redisURL == "" {
-		redisURL = "redis://:p4ssw0rd@localhost:6379/"
-	}
+	redisHost := os.Getenv("REDIS_HOST")
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+	redisPort := os.Getenv("REDIS_PORT")
 
-	err = http.Setup(port, redisURL, "./card/data/words-simply.json")
+	err = http.Setup(port, redisHost, redisPort, redisPassword, "./card/data/words-simply.json")
 	if err != nil {
 		log.Fatal(err)
 	}

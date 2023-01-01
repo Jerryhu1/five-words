@@ -22,8 +22,8 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-func Setup(port string, redisURL string, wordsPath string) error {
-	store, err := redis.NewStore(redisURL)
+func Setup(port string, redisHost string, redisPort string, redisPassword string, wordsPath string) error {
+	store, err := redis.NewStore(redisHost, redisPort, "", redisPassword)
 	if err != nil {
 		return fmt.Errorf("could not create redis store: %s", err)
 	}
