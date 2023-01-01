@@ -25,8 +25,11 @@ func NewController(srv *room.Service) *RoomController {
 }
 
 func (ctrl *RoomController) GetRoom(w http.ResponseWriter, r *http.Request) {
-	setHeaders(w)
+	if r.Method != "GET" {
+		http.Error(w, "method not allowed", 405)
+	}
 
+	setHeaders(w)
 	roomName := mux.Vars(r)["roomName"]
 
 	res, err := ctrl.room.GetByName(roomName)
@@ -41,6 +44,10 @@ func (ctrl *RoomController) GetRoom(w http.ResponseWriter, r *http.Request) {
 }
 
 func (ctrl *RoomController) CreateRoom(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(w, "method not allowed", 405)
+	}
+
 	setHeaders(w)
 	res, err := io.ReadAll(r.Body)
 	if err != nil {

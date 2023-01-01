@@ -25,7 +25,6 @@ const ChatBox = () => {
         text: inputText,
       })
     );
-    console.log("test");
     setInputText("");
   };
 

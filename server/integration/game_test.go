@@ -16,6 +16,7 @@ import (
 	server "github.com/jerryhu1/five-words/http"
 	"github.com/jerryhu1/five-words/message"
 	"github.com/jerryhu1/five-words/room/state"
+	"github.com/jerryhu1/five-words/util/slice"
 	ws "github.com/jerryhu1/five-words/websocket"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
@@ -31,51 +32,8 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestAddTeamPlayer(t *testing.T) {
-	resRoom, err := createRoom()
-	if err != nil {
-		log.Println(err)
-		t.FailNow()
-	}
-
-	conn, err := setupWsClient()
-	if err != nil {
-		log.Println(err)
-		t.FailNow()
-	}
-	defer conn.Close()
-	sessionID, err := registerClient(conn)
-	if err != nil {
-		log.Println(err)
-		t.FailNow()
-	}
-
-	_, err = joinRoom(resRoom.Name, sessionID, "Jerry", conn)
-	if err != nil {
-		t.FailNow()
-	}
-
-	send, _ := ws.CreateSendMessage("ADD_TEAM_PLAYER", message.AddTeamPlayerBody{
-		RoomBody: message.RoomBody{
-			RoomName: resRoom.Name,
-		},
-		PlayerID: sessionID,
-		Team:     "Blue",
-	})
-
-	conn.WriteMessage(websocket.TextMessage, send)
-	_, msg, err := conn.ReadMessage()
-	if err != nil {
-
-	}
-
-	var reply ws.ReceiveMessage
-	err = json.Unmarshal(msg, &reply)
-
-}
-
 func TestCreateRoom(t *testing.T) {
-	room, err := createRoom()
+	room, err := createRoom("Jerry")
 	if err != nil {
 		log.Println(err)
 		t.FailNow()
@@ -87,16 +45,150 @@ func TestCreateRoom(t *testing.T) {
 	assert.Equal(t, len(room.Teams), 4)
 }
 
-func TestAddPlayerToRoom(t *testing.T) {
-	resRoom, err := createRoom()
+func TestStartGame(t *testing.T) {
+	players := []*struct {
+		name      string
+		team      string
+		sessionID string
+		conn      *websocket.Conn
+	}{
+		{
+			name: "Jerry",
+			team: "Blue",
+		},
+		{
+			name: "Tom",
+			team: "Blue",
+		},
+		{
+			name: "John",
+			team: "Red",
+		},
+		{
+			name: "Tom",
+			team: "Red",
+		},
+	}
+
+	room, err := createRoom(players[0].name)
 	if err != nil {
 		log.Println(err)
 		t.FailNow()
 	}
 
-	users := []string{"Jerry", "Tom", "John", "Doe"}
+	for _, p := range players {
+		conn, err := setupWsClient()
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		defer conn.Close()
+		sessionID, err := registerClient(conn)
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		_, err = joinRoom(room.Name, sessionID, p.name, conn)
+		if err != nil {
+			t.FailNow()
+		}
 
-	for _, u := range users {
+		_, err = joinTeam(conn, room.Name, sessionID, p.team)
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		p.conn = conn
+		p.sessionID = sessionID
+	}
+
+	payload := []byte(fmt.Sprintf("{\"sessionID\":\"%s\",\"type\":\"%s\",\"body\":{\"roomName\":\"%s\"}}", players[0].sessionID, string(message.StartGame), room.Name))
+	players[0].conn.WriteMessage(websocket.TextMessage, payload)
+	// for _, p := range players {
+	// 	for i := 3; i >= 0; i -= 1 {
+	// 		var readMsg ws.ReceiveMessage
+	// 		err := p.conn.ReadJSON(&readMsg)
+	// 		if err != nil {
+	// 			log.Println(err)
+	// 			t.FailNow()
+	// 		}
+	// 		assert.Equal(t, message.SetRoom, readMsg.Type)
+
+	// 		var body state.RoomState
+	// 		json.Unmarshal(readMsg.Body, &body)
+	// 		log.Println(string(readMsg.Body))
+	// 		assert.True(t, body.Started)
+	// 		assert.Equal(t, i, body.Timer)
+	// 	}
+	// }
+
+}
+
+func TestAddTeamPlayer(t *testing.T) {
+	players := []struct {
+		name string
+		team string
+	}{
+		{
+			name: "Jerry",
+			team: "Blue",
+		},
+		{
+			name: "Tom",
+			team: "Red",
+		},
+		{
+			name: "John",
+			team: "Yellow",
+		},
+		{
+			name: "Tom",
+			team: "Blue",
+		},
+	}
+
+	resRoom, err := createRoom(players[0].name)
+	if err != nil {
+		log.Println(err)
+		t.FailNow()
+	}
+
+	for _, p := range players {
+		conn, err := setupWsClient()
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		defer conn.Close()
+		sessionID, err := registerClient(conn)
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		_, err = joinRoom(resRoom.Name, sessionID, p.name, conn)
+		if err != nil {
+			t.FailNow()
+		}
+
+		reply, err := joinTeam(conn, resRoom.Name, sessionID, p.team)
+		if err != nil {
+			log.Println(err)
+			t.FailNow()
+		}
+		assert.True(t, slice.Contains(reply.Teams[p.team].Players, sessionID))
+	}
+}
+
+func TestAddPlayerToRoom(t *testing.T) {
+	resRoom, err := createRoom("Jerry")
+	if err != nil {
+		log.Println(err)
+		t.FailNow()
+	}
+
+	players := []string{"Jerry", "Tom", "John", "Doe"}
+
+	for _, u := range players {
 		conn, err := setupWsClient()
 		if err != nil {
 			log.Println(err)
@@ -113,6 +205,7 @@ func TestAddPlayerToRoom(t *testing.T) {
 
 		res, err := joinRoom(resRoom.Name, sessionID, u, conn)
 		if err != nil {
+			log.Println(err)
 			t.FailNow()
 		}
 
@@ -176,9 +269,9 @@ func joinRoom(roomName string, sessionID string, playerName string, conn *websoc
 	return unmarshalMessageToBody[state.RoomState](msg)
 }
 
-func createRoom() (state.RoomState, error) {
+func createRoom(owner string) (state.RoomState, error) {
 	payload := server.CreateRoomParams{
-		Owner:     "Jerry",
+		Owner:     owner,
 		ScoreGoal: 30,
 		Language:  "en",
 		Teams:     4,
@@ -186,7 +279,7 @@ func createRoom() (state.RoomState, error) {
 
 	payloadJson, _ := json.Marshal(payload)
 
-	resp, err := http.Post("http://localhost:9090/rooms/create", "application/json", bytes.NewReader(payloadJson))
+	resp, err := http.Post("http://localhost:9090/rooms", "application/json", bytes.NewReader(payloadJson))
 	if err != nil {
 		return state.RoomState{}, err
 	}
@@ -218,6 +311,43 @@ func setupWsClient() (*websocket.Conn, error) {
 	return c, nil
 }
 
+func joinTeam(conn *websocket.Conn, room string, sessionID string, team string) (state.RoomState, error) {
+	send, _ := ws.CreateSendMessage(message.AddTeamPlayer, message.AddTeamPlayerBody{
+		RoomBody: message.RoomBody{
+			RoomName: room,
+		},
+		PlayerID: sessionID,
+		Team:     team,
+	})
+
+	conn.WriteMessage(websocket.TextMessage, send)
+	_, msg, err := conn.ReadMessage()
+	if err != nil {
+		return state.RoomState{}, err
+	}
+
+	reply, err := unmarshalMessageToBody[state.RoomState](msg)
+	if err != nil {
+		return state.RoomState{}, err
+	}
+
+	return reply, nil
+}
+
+// unmarshalBody unmarshalls a json message to a concrete type T
+func unmarshalMessageToBody[T any](msg []byte) (T, error) {
+	var receive ws.SendMessage
+	err := json.Unmarshal(msg, &receive)
+
+	var res T
+	err = json.Unmarshal(receive.Body, &res)
+	if err != nil {
+		return res, err
+	}
+
+	return res, nil
+}
+
 func setupEnv() error {
 	err := godotenv.Load("../.env.local")
 	if err != nil {
@@ -233,18 +363,4 @@ func setupEnv() error {
 	}()
 	time.Sleep(time.Second * 2)
 	return nil
-}
-
-// unmarshalBody unmarshalls a json message to a concrete type T
-func unmarshalMessageToBody[T any](msg []byte) (T, error) {
-	var receive ws.SendMessage
-	err := json.Unmarshal(msg, &receive)
-
-	var res T
-	err = json.Unmarshal(receive.Body, &res)
-	if err != nil {
-		return res, err
-	}
-
-	return res, nil
 }

@@ -21,8 +21,11 @@ func main() {
 	}
 
 	redisURL := os.Getenv("REDIS_URL")
+	if redisURL == "" {
+		redisURL = "redis://:p4ssw0rd@localhost:6379/"
+	}
 
-	err = http.Setup(port, redisURL, "./cards/data/words-simply.json")
+	err = http.Setup(port, redisURL, "./card/data/words-simply.json")
 	if err != nil {
 		log.Fatal(err)
 	}

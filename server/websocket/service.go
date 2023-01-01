@@ -17,7 +17,6 @@ type Service struct {
 }
 
 // RegisterConnection caches the websocket connection based on a generated guid and sends the guid back to the client
-
 func (s *Service) RegisterConnection(conn *websocket.Conn) (string, error) {
 	id, err := s.connection.RegisterConnection(conn)
 	if err != nil {

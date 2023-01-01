@@ -9,7 +9,7 @@ class RoomClient {
   }
 
   getRoom = (name: string) => {
-    return this.http.get<RoomState>("/room/" + name);
+    return this.http.get<RoomState>("/rooms/" + name);
   };
 
   createRoom = (
@@ -18,28 +18,11 @@ class RoomClient {
     lang: string,
     teams: number
   ): Promise<AxiosResponse<RoomState>> => {
-    return this.http.post<RoomState>(`/room/create`, {
+    return this.http.post<RoomState>(`/rooms`, {
       owner: owner,
       scoreGoal: scoreGoal,
       language: lang,
       teams: teams
-    });
-  };
-
-  addPlayerToRoom = (roomName: string, playerName: string) => {
-    return this.http.post(`/room/${roomName}/add?name=${playerName}`);
-  };
-
-  setPlayerTeam = (
-    roomName: string,
-    playerID: string,
-    oldTeam: string,
-    newTeam: string
-  ) => {
-    return this.http.post(`/room/${roomName}/setPlayerTeam`, {
-      player: playerID,
-      oldTeam: oldTeam,
-      newTeam: newTeam,
     });
   };
 }

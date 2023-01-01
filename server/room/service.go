@@ -31,8 +31,9 @@ type Store interface {
 }
 
 var (
-	ErrNotFound  = errors.New("could not resource")
-	ErrEmptyList = errors.New("could not get random object from empty list")
+	ErrNotFound     = errors.New("could not resource")
+	ErrInvalidInput = errors.New("the input could not be validated")
+	ErrEmptyList    = errors.New("could not get random object from empty list")
 )
 
 var teamNames = []string{"Blue", "Red", "Yellow", "Green"}
@@ -40,7 +41,6 @@ var teamNames = []string{"Blue", "Red", "Yellow", "Green"}
 func NewService(cardService card.Service, store Store) (*Service, error) {
 	h := haikunator.New()
 	h.TokenLength = 0
-	// TODO; store player room mapping in redis
 	playerRoomMap := make(map[string]string)
 	return &Service{store: store, nameGen: h, playerRoomMap: playerRoomMap, card: &cardService}, nil
 }
@@ -84,6 +84,9 @@ func (s *Service) GetByName(name string) (state.RoomState, error) {
 }
 
 func (s *Service) AddPlayer(roomName string, sessionID string, playerName string) (state.RoomState, error) {
+	if roomName == "" || sessionID == "" || playerName == "" {
+		return state.RoomState{}, fmt.Errorf("could not add player to room, roomName: %s, sessionID: %s, playerName %s, err %v", roomName, sessionID, playerName, ErrInvalidInput)
+	}
 	res, err := s.store.GetRoomState(roomName)
 	if err != nil {
 		return state.RoomState{}, err
@@ -196,6 +199,7 @@ func (s *Service) StartGame(roomName string) (state.RoomState, error) {
 	oldState.Timer = 3
 	oldState.Started = true
 	newState, err := s.store.SetRoomState(oldState)
+
 	if err != nil {
 		return state.RoomState{}, err
 	}
@@ -299,7 +303,7 @@ func (s *Service) CheckWord(playerID string, roomName string, word string) (stat
 		return roomState, nil
 	}
 
-	if roomState.Timer == 0 {
+	if roomState.Timer == 0 || roomState.CurrentCard == nil {
 		return roomState, nil
 	}
 

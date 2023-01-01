@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -12,25 +13,8 @@ import (
 	"github.com/jerryhu1/five-words/room/state"
 )
 
-type service interface {
-	Create(owner string, scoreGoal int, language string, teams int) (state.RoomState, error)
-	GetByName(name string) (state.RoomState, error)
-	AddPlayer(roomName string, sessionID string, playerName string) (state.RoomState, error)
-	SetPlayerTeam(roomName string, playerID string, newTeam string) (state.RoomState, error)
-	SetPlayerActive(playerID string, isActive bool) (state.RoomState, error)
-	IncrementScore(roomName string, teamName string, score int) (state.RoomState, error)
-	StartGame(roomName string) (state.RoomState, error)
-	StartRound(roomName string) (state.RoomState, error)
-	SetTimer(roomName string, newTime int, gameState state.State) (state.RoomState, error)
-	DecrementTimer(roomName string) (state.RoomState, error)
-	SetCard(roomName string) (state.RoomState, error)
-	CheckWord(playerID string, roomName string, word string) (state.RoomState, error)
-	Reset(roomName string) (state.RoomState, error)
-	CheckVictory(roomName string) (state.RoomState, error)
-}
-
 type Handler struct {
-	roomSrv     service
+	roomSrv     *room.Service
 	broadcaster Broadcaster
 }
 
@@ -44,7 +28,6 @@ func NewHandler(r *room.Service, broadcaster Broadcaster) Handler {
 func (h Handler) handle(m ReceiveMessage) error {
 	var err error
 	var reply state.RoomState
-
 	switch message.MessageType(m.Type) {
 	case message.JoinRoom:
 		body := message.JoinRoomBody{}
@@ -76,7 +59,6 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
-
 	case message.StartGame:
 		body := message.StartGameBody{}
 		if err := json.Unmarshal(m.Body, &body); err != nil {
@@ -154,6 +136,8 @@ func (h Handler) handle(m ReceiveMessage) error {
 		if err != nil {
 			return err
 		}
+	default:
+		return fmt.Errorf("could not process message of type: %s", m.Type)
 	}
 
 	return h.broadcaster.BroadcastRoomUpdate(reply, websocket.TextMessage)

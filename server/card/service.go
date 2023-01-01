@@ -1,9 +1,9 @@
 package card
 
 import (
-	"embed"
 	"encoding/json"
 	"math/rand"
+	"os"
 	"strings"
 
 	"github.com/jerryhu1/five-words/util/slice"
@@ -44,10 +44,8 @@ type payload struct {
 	Words []string `json:"words"`
 }
 
-var wordsFile embed.FS
-
 func NewService(wordsFilePath string) (Service, error) {
-	file, err := wordsFile.ReadFile(wordsFilePath)
+	file, err := os.ReadFile(wordsFilePath)
 	if err != nil {
 		return Service{}, err
 	}

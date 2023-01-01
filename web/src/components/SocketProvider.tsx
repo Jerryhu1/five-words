@@ -9,7 +9,7 @@ import {addMessage, Message} from "../store/chat";
 
 const SocketProvider: React.FC = ({ children }) => {
   // TODO: dynamically determine url based on environment
-  const { lastMessage, readyState } = useWebSocket(true);
+  const { lastMessage } = useWebSocket(true);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

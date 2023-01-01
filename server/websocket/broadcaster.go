@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 
@@ -34,7 +33,7 @@ func (b Broadcaster) BroadcastRoomUpdate(roomState state.RoomState, messageType 
 			log.Printf("could not get connection with key: %s\n", k)
 			continue
 		}
-		if k == roomState.CurrExplainer && shouldShowCard(roomState) {
+		if k == roomState.CurrExplainer || shouldShowCard(roomState) {
 			err := writeResponse(conn, message.SetRoom, roomState)
 			if err != nil {
 				return err
@@ -56,12 +55,7 @@ func (b Broadcaster) BroadcastTimerDoneMessage(roomState state.RoomState) error 
 }
 
 func (b Broadcaster) BroadcastChatMessage(roomState state.RoomState, chat chat.Chat) error {
-	body, err := json.Marshal(chat)
-	if err != nil {
-		return err
-	}
-
-	return b.broadcastMessage(message.AddMessage, body, roomState)
+	return b.broadcastMessage(message.AddMessage, chat, roomState)
 }
 
 func writeResponse(conn *websocket.Conn, messageType message.MessageType, body interface{}) error {

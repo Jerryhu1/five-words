@@ -40,16 +40,19 @@ func Setup(port string, redisURL string, wordsPath string) error {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", upgrade)
-	r.HandleFunc("/rooms/create", ctrl.CreateRoom)
+	r.HandleFunc("/rooms", ctrl.CreateRoom)
 	r.HandleFunc("/rooms/{roomName}", ctrl.GetRoom)
 
-	address := fmt.Sprintf("localhost:%s", port)
+	address := fmt.Sprintf(":%s", port)
 	fmt.Printf("Listening on port :%s\n", port)
 	log.Fatal(http.ListenAndServe(address, r))
 	return nil
 }
 
 func upgrade(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		http.Error(w, "method not allowed", 405)
+	}
 	w.Header().Add("Access-Control-Allow-Origin", "localhost:3000")
 	// w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 	// w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
@@ -71,7 +74,7 @@ func upgrade(w http.ResponseWriter, r *http.Request) {
 	for {
 		err = websocketSrv.ReceiveMessage(conn)
 		if err != nil {
-			fmt.Printf("could not receive message: %s", err)
+			fmt.Printf("could not handle message: %s", err)
 			// Remove from connections
 			err = websocketSrv.CloseConnection(id)
 			if err != nil {
