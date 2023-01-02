@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/go-redis/redis"
-	"github.com/jerryhu1/five-words/room"
 	"github.com/jerryhu1/five-words/room/state"
 )
 
@@ -46,7 +45,7 @@ func (s *Store) SetRoomState(room state.RoomState) (state.RoomState, error) {
 	return s.GetRoomState(room.Name)
 }
 
-func NewStore(host string, port string, username string, password string) (room.Store, error) {
+func NewStore(host string, port string, username string, password string) (*Store, error) {
 	redisClient := redis.NewClient(
 		&redis.Options{
 			Addr:     fmt.Sprintf("%s:%s", host, port),

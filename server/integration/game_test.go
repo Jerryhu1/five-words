@@ -57,7 +57,7 @@ func TestStartGame(t *testing.T) {
 			team: "Blue",
 		},
 		{
-			name: "Tom",
+			name: "Alice",
 			team: "Blue",
 		},
 		{
@@ -104,24 +104,6 @@ func TestStartGame(t *testing.T) {
 
 	payload := []byte(fmt.Sprintf("{\"sessionID\":\"%s\",\"type\":\"%s\",\"body\":{\"roomName\":\"%s\"}}", players[0].sessionID, string(message.StartGame), room.Name))
 	players[0].conn.WriteMessage(websocket.TextMessage, payload)
-	// for _, p := range players {
-	// 	for i := 3; i >= 0; i -= 1 {
-	// 		var readMsg ws.ReceiveMessage
-	// 		err := p.conn.ReadJSON(&readMsg)
-	// 		if err != nil {
-	// 			log.Println(err)
-	// 			t.FailNow()
-	// 		}
-	// 		assert.Equal(t, message.SetRoom, readMsg.Type)
-
-	// 		var body state.RoomState
-	// 		json.Unmarshal(readMsg.Body, &body)
-	// 		log.Println(string(readMsg.Body))
-	// 		assert.True(t, body.Started)
-	// 		assert.Equal(t, i, body.Timer)
-	// 	}
-	// }
-
 }
 
 func TestAddTeamPlayer(t *testing.T) {
@@ -353,9 +335,11 @@ func setupEnv() error {
 	if err != nil {
 		log.Println("No local env file found, using defaults")
 	}
-	redisURL := os.Getenv("REDIS_URL")
+	host := os.Getenv("REDIS_HOST")
+	port := os.Getenv("REDIS_PORT")
+	pass := os.Getenv("REDIS_PASSWORD")
 	go func() {
-		err = server.Setup("9090", redisURL, "../card/data/words-simply.json")
+		err = server.Setup("9090", host, port, pass, "../card/data/words-simply.json")
 		if err != nil {
 			log.Println(err)
 			return

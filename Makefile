@@ -1,6 +1,9 @@
 
-dev.start:
+up:
 	docker compose up -d
+
+dev.start:
+	docker compose up redis -d
 
 server:
 	cd ./server

@@ -1,7 +1,6 @@
 package room
 
 import (
-	"reflect"
 	"sync"
 	"testing"
 
@@ -72,8 +71,8 @@ func TestService_AddPlayerToRoom(t *testing.T) {
 func TestService_CheckWord(t *testing.T) {
 
 	type args struct {
-		roomName string
-		word     string
+		word       string
+		playerName string
 	}
 	tests := []struct {
 		name    string
@@ -84,11 +83,34 @@ func TestService_CheckWord(t *testing.T) {
 		{
 			name: "should increment score with a correct word",
 			args: args{
-				word: "test word 1",
+				word:       "test word 1",
+				playerName: "test player 2",
 			},
 			want: func(roomState state.RoomState) state.RoomState {
 				roomState.Teams["1"].Score += 1
 				roomState.CurrentCard.Words[0].Correct = true
+				return roomState
+			}(mockRoomState()),
+		},
+		{
+			name: "should not increment score if player not in team",
+			args: args{
+				word:       "test word 1",
+				playerName: "test player 3",
+			},
+			want: func(roomState state.RoomState) state.RoomState {
+				roomState.CurrentCard.Words[0].Correct = false
+				return roomState
+			}(mockRoomState()),
+		},
+		{
+			name: "should not increment score if player is the explainer",
+			args: args{
+				word:       "test word 1",
+				playerName: "test player 1",
+			},
+			want: func(roomState state.RoomState) state.RoomState {
+				roomState.CurrentCard.Words[0].Correct = false
 				return roomState
 			}(mockRoomState()),
 		},
@@ -97,7 +119,7 @@ func TestService_CheckWord(t *testing.T) {
 	s := mockService()
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := s.CheckWord("test", tt.args.roomName, tt.args.word)
+			got, err := s.CheckWord(tt.args.playerName, "", tt.args.word)
 
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CheckWord() error = %v, wantErr %v", err, tt.wantErr)
@@ -127,563 +149,6 @@ func stateEqual(t *testing.T, want state.RoomState, got state.RoomState) {
 	assert.Equal(t, want.Owner, got.Owner)
 	assert.Equal(t, want.TeamTurn, got.TeamTurn)
 	assert.Equal(t, want.ScoreGoal, got.ScoreGoal)
-}
-
-func TestService_Create(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		owner     string
-		scoreGoal int
-		language  string
-		numTeams  int
-	}
-
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.Create(tt.args.owner, tt.args.scoreGoal, tt.args.language, tt.args.numTeams)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Create() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_DecrementTimer(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.DecrementTimer(tt.args.roomName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("DecrementTimer() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("DecrementTimer() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_GetByName(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		name string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.GetByName(tt.args.name)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetByName() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetByName() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_IncrementScore(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName string
-		teamName string
-		score    int
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.IncrementScore(tt.args.roomName, tt.args.teamName, tt.args.score)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("IncrementScore() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("IncrementScore() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_SetCard(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.SetCard(tt.args.roomName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("SetCard() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SetCard() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_SetPlayerActive(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		playerID string
-		isActive bool
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.SetPlayerActive(tt.args.playerID, tt.args.isActive)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("SetPlayerActive() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SetPlayerActive() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_SetPlayerTeam(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName string
-		playerID string
-		newTeam  string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.SetPlayerTeam(tt.args.roomName, tt.args.playerID, tt.args.newTeam)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("SetPlayerTeam() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SetPlayerTeam() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_SetTimer(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName  string
-		newTime   int
-		gameState state.State
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.SetTimer(tt.args.roomName, tt.args.newTime, tt.args.gameState)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("SetTimer() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("SetTimer() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_StartGame(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.StartGame(tt.args.roomName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("StartGame() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("StartGame() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func TestService_StartRound(t *testing.T) {
-	type fields struct {
-		store         Store
-		card          *card.Service
-		nameGen       *haikunator.Haikunator
-		mu            sync.Mutex
-		playerRoomMap map[string]string
-	}
-	type args struct {
-		roomName string
-	}
-	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    state.RoomState
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			s := &Service{
-				store:         tt.fields.store,
-				card:          tt.fields.card,
-				nameGen:       tt.fields.nameGen,
-				mu:            tt.fields.mu,
-				playerRoomMap: tt.fields.playerRoomMap,
-			}
-			got, err := s.StartRound(tt.args.roomName)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("StartRound() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("StartRound() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_getNextStringInArray(t *testing.T) {
-	type args struct {
-		curr string
-		arr  []string
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := getNextStringInArray(tt.args.curr, tt.args.arr); got != tt.want {
-				t.Errorf("getNextStringInArray() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_getNextTeamInMap(t *testing.T) {
-	type args struct {
-		curr string
-		m    map[string]*state.Team
-	}
-	tests := []struct {
-		name string
-		args args
-		want string
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := getNextTeamInMap(tt.args.curr, tt.args.m); got != tt.want {
-				t.Errorf("getNextTeamInMap() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_getTeamForPlayer(t *testing.T) {
-	type args struct {
-		room     state.RoomState
-		playerID string
-	}
-	tests := []struct {
-		name  string
-		args  args
-		want  string
-		want1 bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1 := getTeamForPlayer(tt.args.room, tt.args.playerID)
-			if got != tt.want {
-				t.Errorf("getTeamForPlayer() got = %v, want %v", got, tt.want)
-			}
-			if got1 != tt.want1 {
-				t.Errorf("getTeamForPlayer() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-
-func Test_selectRandomPlayer(t *testing.T) {
-	type args struct {
-		players []string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := selectRandomPlayer(tt.args.players)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("selectRandomPlayer() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("selectRandomPlayer() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_selectRandomTeam(t *testing.T) {
-	type args struct {
-		m map[string]*state.Team
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    string
-		wantErr bool
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := selectRandomTeam(tt.args.m)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("selectRandomTeam() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("selectRandomTeam() got = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_updateScore(t *testing.T) {
-	type args struct {
-		roomState *state.RoomState
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-		})
-	}
 }
 
 func mockService() Service {
@@ -737,14 +202,14 @@ func mockRoomState() state.RoomState {
 				Name:          "test team 1",
 				Score:         3,
 				CurrExplainer: "test player 1",
-				Players:       []string{"1", "2"},
+				Players:       []string{"test player 1", "test player 2"},
 			},
 			"2": {
 				ID:            "2",
 				Name:          "test team 2",
 				Score:         3,
 				CurrExplainer: "test player 3",
-				Players:       []string{"3", "4"},
+				Players:       []string{"test player 3", "test player 4"},
 			},
 		},
 		ScoreGoal: 10,

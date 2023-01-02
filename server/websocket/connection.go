@@ -11,6 +11,7 @@ import (
 
 var ErrConnectionNotFound = errors.New("could not get connection")
 
+// Connection is a struct that keeps the client websocket connections in memory
 type Connection struct {
 	mu          sync.Mutex
 	connections map[string]*websocket.Conn

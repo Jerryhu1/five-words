@@ -16,6 +16,19 @@ type Service struct {
 	handler     Handler
 }
 
+func New(roomSrv *room.Service) *Service {
+	connection := NewConnection()
+	b := NewBroadcaster(connection)
+	handler := NewHandler(roomSrv, b)
+
+	return &Service{
+		roomSrv:     roomSrv,
+		broadcaster: b,
+		handler:     handler,
+		connection:  connection,
+	}
+}
+
 // RegisterConnection caches the websocket connection based on a generated guid and sends the guid back to the client
 func (s *Service) RegisterConnection(conn *websocket.Conn) (string, error) {
 	id, err := s.connection.RegisterConnection(conn)
@@ -79,17 +92,4 @@ func (s *Service) ReceiveMessage(conn *websocket.Conn) error {
 	}
 
 	return s.handler.handle(m)
-}
-
-func New(roomSrv *room.Service) *Service {
-	connection := NewConnection()
-	b := NewBroadcaster(connection)
-	handler := NewHandler(roomSrv, b)
-
-	return &Service{
-		roomSrv:     roomSrv,
-		broadcaster: b,
-		handler:     handler,
-		connection:  connection,
-	}
 }

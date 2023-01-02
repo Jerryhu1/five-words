@@ -18,14 +18,14 @@ import (
 )
 
 type Service struct {
-	store         Store
+	store         store
 	card          *card.Service
 	nameGen       *haikunator.Haikunator
 	mu            sync.Mutex
 	playerRoomMap map[string]string
 }
 
-type Store interface {
+type store interface {
 	GetRoomState(name string) (state.RoomState, error)
 	SetRoomState(room state.RoomState) (state.RoomState, error)
 }
@@ -38,7 +38,7 @@ var (
 
 var teamNames = []string{"Blue", "Red", "Yellow", "Green"}
 
-func NewService(cardService card.Service, store Store) (*Service, error) {
+func NewService(cardService card.Service, store store) (*Service, error) {
 	h := haikunator.New()
 	h.TokenLength = 0
 	playerRoomMap := make(map[string]string)
@@ -74,6 +74,7 @@ func (s *Service) Create(owner string, scoreGoal int, language string, numTeams 
 	return res, nil
 }
 
+// GetByName gets a room by name
 func (s *Service) GetByName(name string) (state.RoomState, error) {
 	res, err := s.store.GetRoomState(name)
 	if err != nil {
@@ -83,6 +84,7 @@ func (s *Service) GetByName(name string) (state.RoomState, error) {
 	return res, nil
 }
 
+// AddPlayer adds a player to the room
 func (s *Service) AddPlayer(roomName string, sessionID string, playerName string) (state.RoomState, error) {
 	if roomName == "" || sessionID == "" || playerName == "" {
 		return state.RoomState{}, fmt.Errorf("could not add player to room, roomName: %s, sessionID: %s, playerName %s, err %v", roomName, sessionID, playerName, ErrInvalidInput)
@@ -107,6 +109,7 @@ func (s *Service) AddPlayer(roomName string, sessionID string, playerName string
 	return s.store.SetRoomState(res)
 }
 
+// SetPlayerTeam sets the team of a player by sessionID, if the player is already in another team, it will be removed from it.
 func (s *Service) SetPlayerTeam(roomName string, playerID string, newTeam string) (state.RoomState, error) {
 	currState, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -144,6 +147,7 @@ func (s *Service) SetPlayerTeam(roomName string, playerID string, newTeam string
 	return s.store.SetRoomState(currState)
 }
 
+// IncrementScore increases the room timer by 1
 func (s *Service) IncrementScore(roomName string, teamName string, score int) (state.RoomState, error) {
 	res, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -159,6 +163,7 @@ func (s *Service) IncrementScore(roomName string, teamName string, score int) (s
 	return res, nil
 }
 
+// SetPlayerActive sets a given player by sessionID to active or unactive
 func (s *Service) SetPlayerActive(playerID string, isActive bool) (state.RoomState, error) {
 	roomName, ok := s.playerRoomMap[playerID]
 	if !ok {
@@ -179,6 +184,7 @@ func (s *Service) SetPlayerActive(playerID string, isActive bool) (state.RoomSta
 	return newState, nil
 }
 
+// StartGame starts the game by selecting a random starting team and explainer. It will then start the countdown.
 func (s *Service) StartGame(roomName string) (state.RoomState, error) {
 	oldState, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -207,6 +213,7 @@ func (s *Service) StartGame(roomName string) (state.RoomState, error) {
 	return newState, nil
 }
 
+// StartRound starts a new round by choosing the next team and explainer. It will then start the countdown.
 func (s *Service) StartRound(roomName string) (state.RoomState, error) {
 	oldState, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -240,6 +247,7 @@ func (s *Service) StartRound(roomName string) (state.RoomState, error) {
 	return newState, nil
 }
 
+// SetTimer sets the room timer to the given `newTime`
 func (s *Service) SetTimer(roomName string, newTime int, gameState state.State) (state.RoomState, error) {
 	oldState, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -255,6 +263,7 @@ func (s *Service) SetTimer(roomName string, newTime int, gameState state.State) 
 	return newState, nil
 }
 
+// DecrementTimer decreases the room timer by 1
 func (s *Service) DecrementTimer(roomName string) (state.RoomState, error) {
 	oldState, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -269,6 +278,7 @@ func (s *Service) DecrementTimer(roomName string) (state.RoomState, error) {
 	return newState, nil
 }
 
+// SetCard selects a random card randomly and sets it in the roomState
 func (s *Service) SetCard(roomName string) (state.RoomState, error) {
 	oldState, err := s.store.GetRoomState(roomName)
 	if err != nil {
@@ -298,7 +308,7 @@ func (s *Service) CheckWord(playerID string, roomName string, word string) (stat
 	}
 
 	playersInTeam := roomState.Teams[roomState.TeamTurn].Players
-	// Only players in own team, exlucing the explainer
+	// Only players in own team, exlucing the explainer can guess
 	if !slice.Contains(playersInTeam, playerID) || roomState.CurrExplainer == playerID {
 		return roomState, nil
 	}

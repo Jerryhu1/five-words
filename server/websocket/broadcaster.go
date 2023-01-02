@@ -11,6 +11,7 @@ import (
 	"github.com/jerryhu1/five-words/room/state"
 )
 
+// Broadcaster is responsible for broadcasting messages to multiple receivers
 type Broadcaster struct {
 	connection *Connection
 }

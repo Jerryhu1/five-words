@@ -13,6 +13,7 @@ import (
 	"github.com/jerryhu1/five-words/room/state"
 )
 
+// Handler handles the received websocket messages from clients and responds accordingly
 type Handler struct {
 	roomSrv     *room.Service
 	broadcaster Broadcaster
@@ -96,7 +97,6 @@ func (h Handler) handle(m ReceiveMessage) error {
 			return err
 		}
 
-		//TODO: give flag for when a message contains a correct answer
 		err = h.broadcaster.BroadcastChatMessage(reply, chat.Chat{
 			Timestamp:  time.Now(),
 			Text:       body.Text,
