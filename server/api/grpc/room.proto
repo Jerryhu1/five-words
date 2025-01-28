@@ -1,0 +1,16 @@
+
+
+message Room {
+
+}
+
+message GetRoomRequest {
+    string name = 1;
+}
+
+
+message GetRoomResponse {
+    Room room = 1;
+}
+
+rpc GetRoom() Room 

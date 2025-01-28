@@ -339,7 +339,7 @@ func setupEnv() error {
 	port := os.Getenv("REDIS_PORT")
 	pass := os.Getenv("REDIS_PASSWORD")
 	go func() {
-		err = server.Setup("9090", host, port, pass, "../card/data/words-simply.json")
+		err = server.Setup("9001", host, port, pass, "../card/data/words-simply.json")
 		if err != nil {
 			log.Println(err)
 			return

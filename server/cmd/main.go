@@ -24,8 +24,17 @@ func main() {
 	redisPassword := os.Getenv("REDIS_PASSWORD")
 	redisPort := os.Getenv("REDIS_PORT")
 
-	err = http.Setup(port, redisHost, redisPort, redisPassword, "./card/data/words-simply.json")
-	if err != nil {
-		log.Fatal(err)
+	serverType := os.Getenv("SERVER_TYPE")
+
+	if serverType == "grpc" {
+
+		grpc := NewServer(grpcPort)
+		api.New(grpc)
+
+	} else {
+		err = http.Setup(port, redisHost, redisPort, redisPassword, "./card/data/words-simply.json")
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 }
